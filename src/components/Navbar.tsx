@@ -59,7 +59,7 @@ export function Navbar() {
 
         {/* GitHub link */}
         <a
-          href="https://github.com/jason/monte-carlo-portfolio"
+          href="https://github.com/jsonfm/monte-carlo-portfolio"
           target="_blank"
           rel="noopener noreferrer"
           className="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 p-2 rounded-lg border border-slate-200 dark:border-slate-800/60 bg-slate-50 dark:bg-slate-900/40 hover:bg-slate-100 dark:hover:bg-slate-900 transition-colors"
