@@ -204,13 +204,10 @@ export default function App() {
                 />
 
                 {/* Simulation Report Summary */}
-                {simResult && (
-                  <SimulationReport 
-                    simulationData={simResult}
-                    assets={assets}
-                    loading={simLoading}
-                  />
-                )}
+                <SimulationReport 
+                  simulationData={simResult}
+                  assets={assets}
+                />
 
                 {/* Methodology Explanations card */}
                 <MethodologyDocs />
