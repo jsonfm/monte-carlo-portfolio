@@ -115,7 +115,7 @@ export function SimulationReport({
       {/* Report Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b-2 border-slate-900/10 dark:border-slate-100/10 print:border-black/20">
         <div className="flex items-start gap-4">
-          <div className="p-3 bg-slate-900 dark:bg-white rounded-2xl text-white dark:text-slate-900 print:bg-slate-900 print:text-white shadow-md">
+          <div className="p-3 bg-indigo-600 dark:bg-indigo-500 rounded-2xl text-white shadow-md shadow-indigo-500/20 print:bg-indigo-600 print:text-white">
             <FileText className="w-6 h-6" />
           </div>
           <div className="space-y-1.5">
