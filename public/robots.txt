@@ -1,0 +1,6 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Host site sitemap location (replace with your custom domain if deployed on a custom domain)
+Sitemap: https://monte-carlo-portfolio.vercel.app/sitemap.xml

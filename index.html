@@ -4,7 +4,61 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Monte Carlo Portfolio Analyzer & Pro Risk Simulator</title>
+    <title>Monte Carlo Portfolio Simulator &amp; Backtester | Risk Analyzer</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Free, pro-grade portfolio simulator &amp; backtester. Run Monte Carlo simulations with GARCH(1,1), Merton Jumps, and Block Bootstrapping. 100% private &amp; client-side." />
+    <meta name="keywords" content="portfolio simulator, monte carlo simulation, portfolio backtest, risk analyzer, value at risk, garch model, merton jump diffusion, asset allocation, investment calculator" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0b0f19" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://github.com/jsonfm/monte-carlo-portfolio" />
+    <meta property="og:title" content="Monte Carlo Portfolio Simulator &amp; Backtester" />
+    <meta property="og:description" content="Free, pro-grade portfolio simulator &amp; backtester. Run Monte Carlo simulations with GARCH(1,1), Merton Jumps, and Block Bootstrapping. 100% private." />
+    <meta property="og:image" content="/og-preview.png" />
+    <meta property="og:site_name" content="Monte Carlo Pro" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://github.com/jsonfm/monte-carlo-portfolio" />
+    <meta name="twitter:title" content="Monte Carlo Portfolio Simulator &amp; Backtester" />
+    <meta name="twitter:description" content="Run Monte Carlo simulations with GARCH(1,1), Merton Jumps, and Block Bootstrapping. Free, pro-grade, and 100% client-side." />
+    <meta name="twitter:image" content="/og-preview.png" />
+
+    <!-- Mobile App Settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Monte Carlo Portfolio Simulator & Pro Risk Analyzer",
+        "operatingSystem": "All",
+        "applicationCategory": "FinanceApplication",
+        "description": "Professional-grade client-side portfolio simulator and backtest engine. Models asset performance using GARCH(1,1) Volatility Clustering, Merton Jump Diffusion, and Historical Block Bootstrapping.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Geometric Brownian Motion (GBM) Simulation",
+          "GARCH(1,1) Volatility Clustering Modeling",
+          "Merton Jump Diffusion (Black Swan) Simulation",
+          "Historical Moving Block Bootstrapping",
+          "Cholesky Correlation Decomposition",
+          "Yahoo Finance Live API Integration",
+          "Value at Risk (VaR) & Conditional VaR (CVaR) Calculations",
+          "Asset Rebalancing & Inflation Modeling"
+        ],
+        "browserRequirements": "Requires JavaScript. Runs 100% client-side in-browser with zero data transmission to external servers."
+      }
+    </script>
+
     <script>
       try {
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -17,6 +71,48 @@
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Rich SEO & Accessibility Fallback for Non-JS Crawlers -->
+    <noscript>
+      <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px 20px; line-height: 1.6; color: #334155;">
+        <h1>Monte Carlo Portfolio Simulator &amp; Backtester</h1>
+        <p>
+          Welcome to the Monte Carlo Portfolio Pro Risk Simulator. This is a pro-grade financial planning tool running 100% client-side in your web browser. Enable JavaScript to access the fully interactive charts, correlation matrices, backtesters, and simulation engines.
+        </p>
+
+        <h2>Key Capabilities &amp; Features</h2>
+        <ul>
+          <li><strong>Interactive Portfolio Designer:</strong> Customize asset weights, assign tickers, and balance allocations up to 100%.</li>
+          <li><strong>Historical Backtesting:</strong> Connect directly to live stock and crypto prices to test how your portfolio would have performed historically.</li>
+          <li><strong>Monte Carlo Simulation Engine:</strong> Simulate future portfolio values over multiple decades under thousands of stochastic scenarios.</li>
+          <li><strong>Value at Risk (VaR) &amp; CVaR:</strong> Calculate precise downside risks and tail-risk estimates under 95% confidence intervals.</li>
+        </ul>
+
+        <h2>Advanced Quantitative Models</h2>
+        <ul>
+          <li><strong>Geometric Brownian Motion (GBM):</strong> The industry-standard continuous-time random walk model for projecting future price paths.</li>
+          <li><strong>GARCH(1,1) Volatility Clustering:</strong> Models realistic market regimes where high-volatility events are followed by high-volatility clusters.</li>
+          <li><strong>Merton Jump Diffusion (Black Swan):</strong> Incorporates unexpected, severe Poisson-distributed shocks to represent market crashes.</li>
+          <li><strong>Historical Moving Block Bootstrapping:</strong> Preserves historical momentum, trends, and return distributions by sampling blocks of returns directly from actual market histories.</li>
+          <li><strong>Cholesky Decomposition:</strong> Factorizes the covariance matrix to preserve correlations between individual assets during simulation runs.</li>
+        </ul>
+
+        <h2>Terminology Glossary &amp; Metrics</h2>
+        <ul>
+          <li><strong>CAGR (Compound Annual Growth Rate):</strong> The mean annual growth rate of an investment over a specified period longer than one year.</li>
+          <li><strong>Sharpe Ratio:</strong> Measures the risk-adjusted return of an investment asset or portfolio.</li>
+          <li><strong>Max Drawdown:</strong> The maximum observed loss from a peak to a trough of a portfolio before a new peak is attained.</li>
+          <li><strong>95% Value at Risk (VaR):</strong> The maximum estimated loss within a 5% worst-case probability limit.</li>
+          <li><strong>95% Conditional Value at Risk (CVaR):</strong> The expected average loss of a portfolio if it drops into the worst-case 5% tail outcomes.</li>
+        </ul>
+
+        <h2>Privacy &amp; Security</h2>
+        <p>
+          Your privacy is our priority. No login is required, no sign-ups exist, and no data is ever uploaded or sent to any backend servers. All simulations, backtests, and charts run completely client-side in your local browser sandbox.
+        </p>
+      </div>
+    </noscript>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
