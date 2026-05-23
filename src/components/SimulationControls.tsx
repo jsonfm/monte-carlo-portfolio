@@ -101,7 +101,16 @@ export function SimulationControls({
           <h4 className="text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Portfolio Settings</h4>
         </div>
         <div>
-          <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Initial Investment</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Initial Investment</label>
+            <InfoTooltip content={
+              <div>
+                <p className="font-bold mb-1 text-slate-100">Initial Investment</p>
+                <p className="mb-2 text-slate-300">The starting principal value of your portfolio.</p>
+                <p className="text-slate-300"><span className="text-blue-400 font-semibold">Common values:</span> $10,000 (retail/starter), $100,000 (mid-career), or $1,000,000 (typical retirement/financial independence milestone).</p>
+              </div>
+            } />
+          </div>
           <div className="relative">
             <span className="absolute left-3 top-2 text-xs font-bold text-slate-500">$</span>
             <input
@@ -129,7 +138,16 @@ export function SimulationControls({
         
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-2">
-            <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Benchmark</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Benchmark</label>
+              <InfoTooltip content={
+                <div>
+                  <p className="font-bold mb-1 text-slate-100">Benchmark Index</p>
+                  <p className="mb-2 text-slate-300">The index or fund used to compare your customized portfolio's historical and simulated growth against.</p>
+                  <p className="text-slate-300"><span className="text-blue-400 font-semibold">Common Choices:</span> SPY (S&P 500) representing US large-cap equities, VT for total global stocks, or BND for US aggregate bonds.</p>
+                </div>
+              } />
+            </div>
             <select
               value={benchmarkTicker}
               onChange={(e) => setBenchmarkTicker(e.target.value)}
@@ -144,7 +162,16 @@ export function SimulationControls({
           </div>
 
           <div className="col-span-2">
-            <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Backtest Range</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Backtest Range</label>
+              <InfoTooltip content={
+                <div>
+                  <p className="font-bold mb-1 text-slate-100">Backtest Historical Range</p>
+                  <p className="mb-2 text-slate-300">The historical period of daily returns used to compute asset performance, correlation, and standard deviation.</p>
+                  <p className="text-slate-300"><span className="text-blue-400 font-semibold">Suggested choice:</span> 5 Years (Default) to balance modern economic trends and sufficient statistical market data.</p>
+                </div>
+              } />
+            </div>
             <select
               value={historicalRange}
               onChange={(e) => setHistoricalRange(e.target.value as HistoricalRange)}
@@ -171,7 +198,16 @@ export function SimulationControls({
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Horizon (Years)</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Horizon (Years)</label>
+              <InfoTooltip content={
+                <div>
+                  <p className="font-bold mb-1 text-slate-100">Horizon (Years)</p>
+                  <p className="mb-2 text-slate-300">How many years into the future you want to project your portfolio's performance.</p>
+                  <p className="text-slate-300"><span className="text-purple-400 font-semibold">Suggested choice:</span> 10–20 years for mid-term targets, or 30–40 years for long-term retirement planning.</p>
+                </div>
+              } />
+            </div>
             <input
               type="number"
               value={horizonYears}
@@ -183,7 +219,16 @@ export function SimulationControls({
           </div>
 
           <div>
-            <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Simulation Runs</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Simulation Runs</label>
+              <InfoTooltip content={
+                <div>
+                  <p className="font-bold mb-1 text-slate-100">Simulation Runs</p>
+                  <p className="mb-2 text-slate-300">The number of independent randomized future price paths simulated.</p>
+                  <p className="text-slate-300"><span className="text-purple-400 font-semibold">Suggested choice:</span> 5,000 runs (best balance of calculation speed and tail-risk percentile accuracy).</p>
+                </div>
+              } />
+            </div>
             <select
               value={simulationsCount}
               onChange={(e) => setSimulationsCount(parseInt(e.target.value))}
@@ -201,7 +246,14 @@ export function SimulationControls({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Simulation Model</label>
-            <InfoTooltip content="Choose how future paths are generated: either statistically assuming normal distribution (GBM), or by randomly drawing actual historical market days to preserve true market behavior (Bootstrapping)." />
+            <InfoTooltip content={
+              <div>
+                <p className="font-bold mb-1 text-slate-100">Simulation Model</p>
+                <p className="mb-2 text-slate-300">Choose the mathematical engine used to project randomized future return paths.</p>
+                <p className="mb-1.5 text-slate-300"><span className="text-purple-400 font-semibold">Brownian Motion (GBM):</span> Projects standard continuous log-normal paths based on historical mean and standard deviation.</p>
+                <p className="text-slate-300"><span className="text-purple-400 font-semibold">Historical Resample (Bootstrap):</span> Randomly extracts daily return chunks directly from real history. Preserves natural skewness, fat-tail crash events, and correlation.</p>
+              </div>
+            } />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <button
@@ -238,7 +290,15 @@ export function SimulationControls({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Rebalancing Frequency</label>
-            <InfoTooltip content="Determines how often the asset weights are reset back to your original target allocation. Choose calendar intervals (monthly, annually) or threshold-based rebalancing when weights drift." />
+            <InfoTooltip content={
+              <div>
+                <p className="font-bold mb-1 text-slate-100">Rebalancing Frequency</p>
+                <p className="mb-2 text-slate-300">Determines how often your portfolio asset weights are reset back to your target allocation percentage.</p>
+                <p className="mb-1 text-slate-300"><span className="text-purple-400 font-semibold">None:</span> Portfolio drifts unchecked (highest asset variance).</p>
+                <p className="mb-1 text-slate-300"><span className="text-purple-400 font-semibold">Monthly/Annually:</span> Resets weights on fixed calendar intervals. Annually is the standard retail/institutional default.</p>
+                <p className="text-slate-300"><span className="text-purple-400 font-semibold">Threshold:</span> Dynamic rebalancing whenever an asset drifts past a deviation boundary (e.g., 5%).</p>
+              </div>
+            } />
           </div>
           <div className="grid grid-cols-4 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
             {(['none', 'monthly', 'annually', 'threshold'] as const).map((freq) => (
@@ -286,7 +346,17 @@ export function SimulationControls({
           <div className="space-y-4 pt-1 border-t border-amber-500/10 dark:border-amber-500/5 mt-1">
             {/* 1. Monthly Cash Flows */}
             <div className="space-y-2">
-              <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Periodic Cash Flows</h5>
+              <div className="flex items-center justify-between">
+                <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Periodic Cash Flows</h5>
+                <InfoTooltip content={
+                  <div>
+                    <p className="font-bold mb-1 text-slate-100">Periodic Cash Flows</p>
+                    <p className="mb-2 text-slate-300">Simulate ongoing monthly savings or systematic retirement spending.</p>
+                    <p className="mb-1.5 text-slate-300"><span className="text-amber-400 font-semibold">Monthly Deposit:</span> Suggested: $100 – $2,000/mo to model continuous savings contribution.</p>
+                    <p className="text-slate-300"><span className="text-amber-400 font-semibold">Monthly Withdrawal:</span> Suggested: $0 during accumulation, or 3%–4% of your starting portfolio annually (divided by 12) for retirement income.</p>
+                  </div>
+                } />
+              </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Monthly Deposit ($)</label>
@@ -318,7 +388,16 @@ export function SimulationControls({
             {/* 2. Inflation adjustment */}
             <div className="space-y-2 border-t border-amber-500/10 pt-3">
               <div className="flex items-center justify-between">
-                <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Inflation (Real Return Drag)</h5>
+                <div className="flex items-center gap-1.5">
+                  <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Inflation (Real Return Drag)</h5>
+                  <InfoTooltip content={
+                    <div>
+                      <p className="font-bold mb-1 text-slate-100">Inflation Drag</p>
+                      <p className="mb-2 text-slate-300">Reduces nominal projected returns to display values in "today's dollars" (representing future purchasing power).</p>
+                      <p className="text-slate-300"><span className="text-amber-400 font-semibold">Suggested rate:</span> 2.0% (historical Fed inflation target) to 3.0% (long-term US historical average). Disable to show nominal growth.</p>
+                    </div>
+                  } />
+                </div>
                 <label className="relative inline-flex h-4 w-7 items-center rounded-full cursor-pointer select-none">
                   <input
                     type="checkbox"
@@ -354,7 +433,17 @@ export function SimulationControls({
             {/* 3. Transaction Costs & Taxes */}
             <div className="space-y-2 border-t border-amber-500/10 pt-3">
               <div className="flex items-center justify-between">
-                <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Taxable Account Model</h5>
+                <div className="flex items-center gap-1.5">
+                  <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Taxable Account Model</h5>
+                  <InfoTooltip content={
+                    <div>
+                      <p className="font-bold mb-1 text-slate-100">Taxable Account Model</p>
+                      <p className="mb-2 text-slate-300">Incorporates taxation and transaction fees that drag down growth during portfolio rebalances.</p>
+                      <p className="mb-1.5 text-slate-300"><span className="text-amber-400 font-semibold">Capital Gains Tax:</span> Suggested: 15% (standard US long-term gains bracket) or 20% (higher income brackets). Use 0% for tax-sheltered accounts (IRA/401k).</p>
+                      <p className="text-slate-300"><span className="text-amber-400 font-semibold">Fee & Slippage:</span> Suggested: 0.05% to 0.15% to model bid-ask spreads, transaction commission, and price slippage. 0.1% is the industry average benchmark.</p>
+                    </div>
+                  } />
+                </div>
                 <label className="relative inline-flex h-4 w-7 items-center rounded-full cursor-pointer select-none">
                   <input
                     type="checkbox"
@@ -399,7 +488,19 @@ export function SimulationControls({
 
             {/* 4. Advanced Quantitative Parameters */}
             <div className="space-y-2 border-t border-amber-500/10 pt-3">
-              <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Advanced Math Engine</h5>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Advanced Math Engine</h5>
+                  <InfoTooltip content={
+                    <div>
+                      <p className="font-bold mb-1 text-slate-100">Advanced Math Engine</p>
+                      <p className="mb-2 text-slate-300">Integrates advanced institutional-grade mathematical models into the Monte Carlo paths.</p>
+                      <p className="mb-1.5 text-slate-300"><span className="text-amber-400 font-semibold">GARCH(1,1) Volatility:</span> Models volatility clustering (the tendency of highly volatile market periods to group together, simulating realistic panic/calm cycles). Suggested: ON (GBM model only).</p>
+                      <p className="text-slate-300"><span className="text-amber-400 font-semibold">Merton Jumps:</span> Adds randomized discontinuous "jumps" (extreme crash events, e.g., flash crashes) to the simulations. Suggested: ON (GBM model only).</p>
+                    </div>
+                  } />
+                </div>
+              </div>
               
               {model === 'gbm' && (
                 <div className="grid grid-cols-2 gap-2">
@@ -439,7 +540,16 @@ export function SimulationControls({
 
               {model === 'bootstrap' && (
                 <div>
-                  <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Bootstrap Block Size (Days)</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Bootstrap Block Size (Days)</label>
+                    <InfoTooltip content={
+                      <div>
+                        <p className="font-bold mb-1 text-slate-100">Bootstrap Block Size</p>
+                        <p className="mb-2 text-slate-300">The length of consecutive daily historical returns sampled in "blocks" to preserve short-term price trend/momentum effects.</p>
+                        <p className="text-slate-300"><span className="text-amber-400 font-semibold">Suggested choice:</span> 5 to 21 days (5d = 1 trading week, 10d = 2 weeks, 21d = 1 month). Default is 10 days.</p>
+                      </div>
+                    } />
+                  </div>
                   <div className="flex items-center gap-2">
                     <input
                       type="range"
@@ -457,7 +567,16 @@ export function SimulationControls({
 
               {rebalanceFrequency === 'threshold' && (
                 <div>
-                  <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Rebalance Trigger Threshold (%)</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Rebalance Trigger Threshold (%)</label>
+                    <InfoTooltip content={
+                      <div>
+                        <p className="font-bold mb-1 text-slate-100">Rebalance Threshold</p>
+                        <p className="mb-2 text-slate-300">The maximum allocation drift allowed before a dynamic portfolio rebalancing trade is triggered.</p>
+                        <p className="text-slate-300"><span className="text-amber-400 font-semibold">Suggested choice:</span> 5.0% (industry-standard default that limits drift without triggering excessive tax or trading fees) or 10.0%.</p>
+                      </div>
+                    } />
+                  </div>
                   <div className="flex items-center gap-2">
                     <input
                       type="range"
