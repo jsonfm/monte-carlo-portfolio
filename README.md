@@ -4,7 +4,7 @@
 [![React](https://img.shields.io/badge/React-19.x-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.0-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![GitHub Actions Pages](https://github.com/jason/monte-carlo-portfolio/actions/workflows/deploy.yml/badge.svg)](https://github.com/jason/monte-carlo-portfolio/actions/workflows/deploy.yml)
+[![GitHub Actions Pages](https://github.com/jsonfm/monte-carlo-portfolio/actions/workflows/deploy.yml/badge.svg)](https://github.com/jsonfm/monte-carlo-portfolio/actions/workflows/deploy.yml)
 
 A professional, fully client-side **Quantitative Portfolio Designer, Historical Backtester, and Monte Carlo Simulation Engine**. Designed with modern finance frameworks and high-performance algorithms, this web application helps investors, analysts, and students model future asset returns, run complex stochastic walks, and backtest portfolio strategies with extreme responsiveness.
 
