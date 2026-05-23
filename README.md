@@ -8,6 +8,8 @@
 
 A professional, fully client-side **Quantitative Portfolio Designer, Historical Backtester, and Monte Carlo Simulation Engine**. Designed with modern finance frameworks and high-performance algorithms, this web application helps investors, analysts, and students model future asset returns, run complex stochastic walks, and backtest portfolio strategies with extreme responsiveness.
 
+**Live demo:** [jsonfm.github.io/monte-carlo-portfolio](https://jsonfm.github.io/monte-carlo-portfolio/)
+
 ---
 
 ## 🌟 Key Features
@@ -69,7 +71,7 @@ Under the non-parametric **Historical Bootstrapping** model, we do not assume re
 
 The engine randomly samples a joint row of returns from actual historical trading days:
 
-$$\mathbf{R}_t = \mathbf{r}_{\text{random\_day}}$$
+$$\mathbf{R}_t = \mathbf{r}_{\mathrm{random\ day}}$$
 
 Because we sample the **entire row** (returns of all assets on the same day) simultaneously, the correlation structure, skewness, and kurtosis of the assets are perfectly preserved in the simulation without the need for parametric adjustments.
 
@@ -141,7 +143,7 @@ Make sure you have Node.js (v18+) and npm installed on your machine.
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/monte-carlo-portfolio.git
+    git clone https://github.com/jsonfm/monte-carlo-portfolio.git
     cd monte-carlo-portfolio
     ```
 
