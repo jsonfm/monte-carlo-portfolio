@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
-import { Scale, TrendingUp, Zap, HelpCircle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Scale, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import type { HistoricalMetrics } from '@/types';
 import { formatPercent } from '@/utils/reportInsights';
-import InfoTooltip from '@/components/InfoTooltip';
 
 interface BenchmarkComparisonProps {
   historicalData: HistoricalMetrics | null;

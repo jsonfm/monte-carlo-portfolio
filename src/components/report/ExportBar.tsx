@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Clipboard, Check, Download, Printer, FileText } from 'lucide-react';
+import { Clipboard, Check, Download } from 'lucide-react';
 import type { Asset, SimulationSummary, HistoricalMetrics } from '@/types';
 import { 
   formatCurrency, 
@@ -8,7 +8,6 @@ import {
   getConcentrationDetails,
   calculateFrictionDrag,
   calculateDepletionMetrics,
-  calculateTimeToGoals,
   solveRequiredCapital,
   generateInstitutionalRecommendations
 } from '@/utils/reportInsights';
@@ -230,10 +229,6 @@ Report compiled by Smart Monte Carlo Engine. Analytical Reference Memo.
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  };
-
-  const printReport = () => {
-    window.print();
   };
 
   return (

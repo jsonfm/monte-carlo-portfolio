@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { PieChart, ShieldCheck, AlertTriangle, Layers } from 'lucide-react';
+import { ShieldCheck, AlertTriangle, Layers } from 'lucide-react';
 import type { Asset } from '@/types';
 import { getConcentrationDetails } from '@/utils/reportInsights';
 

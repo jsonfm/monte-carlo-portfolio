@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Sparkles, ShieldCheck, ShieldAlert, Award } from 'lucide-react';
+import { Sparkles, Award } from 'lucide-react';
 import type { Asset, SimulationSummary, HistoricalMetrics } from '@/types';
 import { formatCurrency, formatPercent, formatProbability } from '@/utils/reportInsights';
 
@@ -12,7 +12,6 @@ interface ExecutiveSummaryProps {
 
 export function ExecutiveSummary({
   simulationData,
-  historicalData,
   assets,
   horizonYears,
 }: ExecutiveSummaryProps) {

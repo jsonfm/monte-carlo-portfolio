@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ShieldAlert, AlertTriangle, ShieldCheck, Flame, Scale } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, Flame, Scale } from 'lucide-react';
 import type { SimulationSummary } from '@/types';
 import { 
   formatCurrency, 
@@ -9,7 +9,6 @@ import {
   calculateFrictionDrag,
   calculateDepletionMetrics
 } from '@/utils/reportInsights';
-import InfoTooltip from '@/components/InfoTooltip';
 
 interface RiskAssessmentProps {
   simulationData: SimulationSummary;
@@ -24,14 +23,12 @@ export function RiskAssessment({
   horizonYears,
   monthlyWithdrawal,
   adjustInflation,
-  annualInflationRate,
 }: RiskAssessmentProps) {
   const percentiles = simulationData.percentiles;
   const m = simulationData.metrics;
   const numSims = simulationData.finalValues.length;
 
   const absoluteWorst = simulationData.finalValues[0] ?? 0;
-  const absoluteBest = simulationData.finalValues[simulationData.finalValues.length - 1] ?? 0;
 
   // 1. Path drawdowns
   const drawdowns = useMemo(() => {

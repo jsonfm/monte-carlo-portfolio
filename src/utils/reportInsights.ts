@@ -238,7 +238,7 @@ export function generateRecommendations(
   horizonYears: number,
   simulationData: SimulationSummary,
   historicalMetrics: HistoricalMetrics | null,
-  rebalanceFrequency: string,
+  _rebalanceFrequency: string,
   useMertonJumps: boolean
 ): RecommendationCard[] {
   const recs: RecommendationCard[] = [];
@@ -319,7 +319,6 @@ export function generateRecommendations(
   }
 
   // Check 7: Sequence of returns risk (Trinity guidelines)
-  const depletion = calculateDepletionMetrics(simulationData, m.medianTotalFeesPaid /* dummy or custom withdrawals */, initialValue); // wait, let's pass real withdrawal
   // We can get withdrawal values directly if we inspect simulation data.
   // Wait, the caller can pass monthlyWithdrawal. Let's make sure the engine gets monthlyWithdrawal!
   // To avoid breaking the signature, let's use a wrapper or inspect withdrawal.

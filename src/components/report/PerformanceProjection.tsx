@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { TrendingUp, Award, HelpCircle } from 'lucide-react';
+import { TrendingUp, Award } from 'lucide-react';
 import type { SimulationSummary, Asset } from '@/types';
-import { formatCurrency, formatPercent, formatProbability, calculateTimeToGoals } from '@/utils/reportInsights';
+import { formatCurrency, formatPercent, calculateTimeToGoals } from '@/utils/reportInsights';
 import InfoTooltip from '@/components/InfoTooltip';
 import { DistributionHistogram } from '@/components/report/DistributionHistogram';
 
@@ -16,7 +16,6 @@ interface PerformanceProjectionProps {
 
 export function PerformanceProjection({
   simulationData,
-  assets,
   horizonYears,
   adjustInflation,
   annualInflationRate,
