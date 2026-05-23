@@ -1,5 +1,17 @@
 import { BookOpen, ShieldAlert, Sparkles, HelpCircle } from 'lucide-react';
-import { BlockMath, InlineMath } from 'react-katex';
+import { MathJax } from 'better-react-mathjax';
+
+function BlockMath({ math }: { math: string }) {
+  return (
+    <div className="w-full overflow-x-auto flex justify-center py-1">
+      <MathJax>{`$$${math}$$`}</MathJax>
+    </div>
+  );
+}
+
+function InlineMath({ math }: { math: string }) {
+  return <MathJax inline>{`\\(${math}\\)`}</MathJax>;
+}
 
 export function MethodologyDocs() {
   return (
@@ -24,10 +36,10 @@ export function MethodologyDocs() {
             GBM is the industry-standard continuous-time stochastic process used to model asset prices over time. The asset price follows this stochastic differential equation:
           </p>
           <div className="bg-white dark:bg-slate-900/50 p-2.5 rounded-lg text-slate-800 dark:text-slate-300 overflow-x-auto border border-slate-200 dark:border-slate-800/50">
-            <BlockMath math={String.raw`dS_t = \mu S_t dt + \sigma S_t dW_t`} />
+            <BlockMath math={"dS_t = \\mu S_t dt + \\sigma S_t dW_t"} />
           </div>
           <p className="text-[10px] text-slate-500 leading-relaxed">
-            Where <InlineMath math={String.raw`\mu`} /> is the drift (expected CAGR), <InlineMath math={String.raw`\sigma`} /> is the annualized volatility, and <InlineMath math={String.raw`dW_t`} /> is a standard Wiener process.
+            Where <InlineMath math={"\\mu"} /> is the drift (expected CAGR), <InlineMath math={"\\sigma"} /> is the annualized volatility, and <InlineMath math={"dW_t"} /> is a standard Wiener process.
           </p>
         </div>
 
@@ -38,13 +50,13 @@ export function MethodologyDocs() {
             <span>Asset Correlation (Cholesky Factor)</span>
           </div>
           <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-            To simulate realistic portfolios, we compute the historical covariance matrix <InlineMath math={String.raw`\Sigma`} /> and perform a Cholesky Decomposition:
+            To simulate realistic portfolios, we compute the historical covariance matrix <InlineMath math={"\\Sigma"} /> and perform a Cholesky Decomposition:
           </p>
           <div className="bg-white dark:bg-slate-900/50 p-2.5 rounded-lg text-slate-800 dark:text-slate-300 overflow-x-auto border border-slate-200 dark:border-slate-800/50">
-            <BlockMath math={String.raw`\Sigma = L L^T`} />
+            <BlockMath math={"\\Sigma = L L^T"} />
           </div>
           <p className="text-[10px] text-slate-500 leading-relaxed">
-            When we generate independent normal variables <InlineMath math={String.raw`\mathbf{Z}`} />, we multiply them by <InlineMath math={String.raw`L`} /> to obtain correlated normal variables: <InlineMath math={String.raw`\mathbf{X} = L \mathbf{Z}`} />.
+            When we generate independent normal variables <InlineMath math={"\\mathbf{Z}"} />, we multiply them by <InlineMath math={"L"} /> to obtain correlated normal variables: <InlineMath math={"\\mathbf{X} = L \\mathbf{Z}"} />.
           </p>
         </div>
 
