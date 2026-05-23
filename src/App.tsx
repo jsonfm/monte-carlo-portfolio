@@ -30,6 +30,28 @@ export default function App() {
     setBenchmarkTicker,
     historicalRange,
     setHistoricalRange,
+    monthlyContribution,
+    setMonthlyContribution,
+    monthlyWithdrawal,
+    setMonthlyWithdrawal,
+    adjustInflation,
+    setAdjustInflation,
+    annualInflationRate,
+    setAnnualInflationRate,
+    isTaxable,
+    setIsTaxable,
+    capitalGainsTaxRate,
+    setCapitalGainsTaxRate,
+    transactionFeeRate,
+    setTransactionFeeRate,
+    rebalanceThreshold,
+    setRebalanceThreshold,
+    bootstrapBlockSize,
+    setBootstrapBlockSize,
+    useGarch,
+    setUseGarch,
+    useMertonJumps,
+    setUseMertonJumps,
     customCsvPrices,
     customCsvUploaded,
     handleUploadCSV,
@@ -57,6 +79,17 @@ export default function App() {
     simulationsCount,
     model,
     rebalanceFrequency,
+    monthlyContribution,
+    monthlyWithdrawal,
+    adjustInflation,
+    annualInflationRate,
+    isTaxable,
+    capitalGainsTaxRate,
+    transactionFeeRate,
+    rebalanceThreshold,
+    bootstrapBlockSize,
+    useGarch,
+    useMertonJumps,
   });
 
   const handleCombinedReset = () => {
@@ -117,6 +150,28 @@ export default function App() {
               setBenchmarkTicker={setBenchmarkTicker}
               historicalRange={historicalRange}
               setHistoricalRange={setHistoricalRange}
+              monthlyContribution={monthlyContribution}
+              setMonthlyContribution={setMonthlyContribution}
+              monthlyWithdrawal={monthlyWithdrawal}
+              setMonthlyWithdrawal={setMonthlyWithdrawal}
+              adjustInflation={adjustInflation}
+              setAdjustInflation={setAdjustInflation}
+              annualInflationRate={annualInflationRate}
+              setAnnualInflationRate={setAnnualInflationRate}
+              isTaxable={isTaxable}
+              setIsTaxable={setIsTaxable}
+              capitalGainsTaxRate={capitalGainsTaxRate}
+              setCapitalGainsTaxRate={setCapitalGainsTaxRate}
+              transactionFeeRate={transactionFeeRate}
+              setTransactionFeeRate={setTransactionFeeRate}
+              rebalanceThreshold={rebalanceThreshold}
+              setRebalanceThreshold={setRebalanceThreshold}
+              bootstrapBlockSize={bootstrapBlockSize}
+              setBootstrapBlockSize={setBootstrapBlockSize}
+              useGarch={useGarch}
+              setUseGarch={setUseGarch}
+              useMertonJumps={useMertonJumps}
+              setUseMertonJumps={setUseMertonJumps}
               onRunSimulation={handleQuickRunSimulation}
               onReset={handleCombinedReset}
               isValid={isAllocationValid}
@@ -207,6 +262,21 @@ export default function App() {
                 <SimulationReport 
                   simulationData={simResult}
                   assets={assets}
+                  model={model}
+                  rebalanceFrequency={rebalanceFrequency}
+                  horizonYears={horizonYears}
+                  simulationsCount={simulationsCount}
+                  monthlyContribution={monthlyContribution}
+                  monthlyWithdrawal={monthlyWithdrawal}
+                  adjustInflation={adjustInflation}
+                  annualInflationRate={annualInflationRate}
+                  isTaxable={isTaxable}
+                  capitalGainsTaxRate={capitalGainsTaxRate}
+                  transactionFeeRate={transactionFeeRate}
+                  rebalanceThreshold={rebalanceThreshold}
+                  bootstrapBlockSize={bootstrapBlockSize}
+                  useGarch={useGarch}
+                  useMertonJumps={useMertonJumps}
                 />
 
                 {/* Methodology Explanations card */}

@@ -9,6 +9,21 @@ import InfoTooltip from '@/components/InfoTooltip';
 interface SimulationReportProps {
   simulationData: SimulationSummary | null;
   assets: Asset[];
+  model?: 'gbm' | 'bootstrap';
+  rebalanceFrequency?: 'none' | 'monthly' | 'annually' | 'threshold';
+  horizonYears?: number;
+  simulationsCount?: number;
+  monthlyContribution?: number;
+  monthlyWithdrawal?: number;
+  adjustInflation?: boolean;
+  annualInflationRate?: number;
+  isTaxable?: boolean;
+  capitalGainsTaxRate?: number;
+  transactionFeeRate?: number;
+  rebalanceThreshold?: number;
+  bootstrapBlockSize?: number;
+  useGarch?: boolean;
+  useMertonJumps?: boolean;
 }
 
 const EMPTY_METRICS: SimulationSummary['metrics'] = {
@@ -22,6 +37,9 @@ const EMPTY_METRICS: SimulationSummary['metrics'] = {
   conditionalValueAtRisk95: 0,
   probabilityOfLoss: 0,
   probabilityOfTarget: 0,
+  medianTotalFeesPaid: 0,
+  medianTotalTaxesPaid: 0,
+  medianInflationAdjustedValue: 0,
 };
 
 const EMPTY_PERCENTILES: SimulationSummary['percentiles'] = {
@@ -37,6 +55,21 @@ const EMPTY_FINAL_VALUES: number[] = [];
 export function SimulationReport({
   simulationData,
   assets,
+  model = 'gbm',
+  rebalanceFrequency = 'none',
+  horizonYears: horizonYearsProp,
+  simulationsCount = 5000,
+  monthlyContribution = 0,
+  monthlyWithdrawal = 0,
+  adjustInflation = false,
+  annualInflationRate = 0.03,
+  isTaxable = false,
+  capitalGainsTaxRate = 0.15,
+  transactionFeeRate = 0.001,
+  rebalanceThreshold = 5,
+  bootstrapBlockSize = 10,
+  useGarch = false,
+  useMertonJumps = false,
 }: SimulationReportProps) {
   const [copied, setCopied] = useState(false);
   const [customGoal, setCustomGoal] = useState<string>('');
@@ -44,7 +77,7 @@ export function SimulationReport({
   const percentiles = simulationData?.percentiles ?? EMPTY_PERCENTILES;
   const finalValues = simulationData?.finalValues ?? EMPTY_FINAL_VALUES;
   const metrics = simulationData?.metrics ?? EMPTY_METRICS;
-  const horizonYears = simulationData ? percentiles.p50.length - 1 : 0;
+  const horizonYears = horizonYearsProp ?? (simulationData ? percentiles.p50.length - 1 : 10);
   const numSims = finalValues.length;
 
   // Basic formatters
@@ -258,6 +291,14 @@ Horizon: ${horizonYears} Years
 Simulations Run: ${numSims.toLocaleString()} Trials
 Initial Capital: ${formatCurrency(metrics.initialValue)}
 
+SIMULATION CONFIGURATIONS:
+ - Core Engine Model: ${model === 'gbm' ? 'Geometric Brownian Motion (GBM)' : 'Historical Resample'}
+ - Periodic Cash Flows: ${monthlyContribution > 0 ? `+${formatCurrency(monthlyContribution)}/month` : 'None'} | ${monthlyWithdrawal > 0 ? `-${formatCurrency(monthlyWithdrawal)}/month` : 'None'}
+ - Real Inflation Drag: ${adjustInflation ? `Adjusted (${(annualInflationRate * 100).toFixed(1)}% rate)` : 'Nominal Value Only'}
+ - Taxes & Trading Costs: ${isTaxable ? `Taxable (${(capitalGainsTaxRate * 100).toFixed(0)}% rate)` : 'Tax-Sheltered'} | Fee Rate: ${(transactionFeeRate * 100).toFixed(2)}% per transaction
+ - Rebalancing Strategy: ${rebalanceFrequency === 'threshold' ? `Threshold-Based (±${rebalanceThreshold.toFixed(1)}%)` : rebalanceFrequency === 'none' ? 'No Rebalancing' : `Calendar-Based (${rebalanceFrequency})`}
+ - Advanced Parameters: ${model === 'gbm' ? `${useGarch ? 'GARCH Vol Clustering' : 'Static Vol'} | ${useMertonJumps ? 'Merton Jump-Diffusion enabled' : 'Continuous path only'}` : `Block Bootstrap: ${bootstrapBlockSize} trading days`}
+
 PORTFOLIO STRUCTURE:
 ${assetString}
 
@@ -365,6 +406,68 @@ Generated on ${new Date().toLocaleDateString()}
                 .replace(/\*\*(.*?)\*\*/g, '<strong class="font-extrabold text-slate-800 dark:text-slate-100">$1</strong>')
             }}
           />
+        </div>
+      </div>
+
+      {/* Assumed Simulation Settings / Parameters */}
+      <div className="bg-slate-50 dark:bg-slate-900/20 border border-slate-200 dark:border-slate-800/40 rounded-2xl p-4.5 space-y-3">
+        <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider block">Simulation Settings & Assumed Constraints</span>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-[11px] leading-tight">
+          <div className="space-y-0.5">
+            <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-semibold block">Model & Horizon</span>
+            <p className="font-extrabold text-slate-700 dark:text-slate-300">
+              {model === 'gbm' ? 'Brownian Motion (GBM)' : 'Historical Resample'}
+            </p>
+            <p className="text-[10px] text-slate-500">
+              {simulationsCount.toLocaleString()} trials · {horizonYears} yr horizon
+            </p>
+          </div>
+
+          <div className="space-y-0.5">
+            <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-semibold block">Regular Cash Flows</span>
+            <p className="font-extrabold text-slate-700 dark:text-slate-300">
+              {monthlyContribution > 0 ? `+${formatCurrency(monthlyContribution)}/mo` : 'No Deposits'}
+            </p>
+            <p className="text-[10px] text-slate-500">
+              {monthlyWithdrawal > 0 ? `-${formatCurrency(monthlyWithdrawal)}/mo` : 'No Withdrawals'}
+            </p>
+          </div>
+
+          <div className="space-y-0.5">
+            <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-semibold block">Inflation Modeling</span>
+            <p className="font-extrabold text-slate-700 dark:text-slate-300">
+              {adjustInflation ? `Real Drag (${(annualInflationRate * 100).toFixed(1)}%)` : 'Nominal Baseline'}
+            </p>
+            <p className="text-[10px] text-slate-500">
+              {adjustInflation ? 'Displays real purchasing power' : 'Ignores purchase power loss'}
+            </p>
+          </div>
+
+          <div className="space-y-0.5">
+            <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-semibold block">Account Taxes & Fees</span>
+            <p className="font-extrabold text-slate-700 dark:text-slate-300">
+              {isTaxable ? `Taxable (${(capitalGainsTaxRate * 100).toFixed(0)}% rate)` : 'Tax-Advantaged'}
+            </p>
+            <p className="text-[10px] text-slate-500">
+              Fee: {(transactionFeeRate * 100).toFixed(2)}% per trade
+            </p>
+          </div>
+
+          <div className="space-y-0.5 col-span-2 md:col-span-1">
+            <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase font-semibold block">Advanced Mechanics</span>
+            <p className="font-extrabold text-slate-700 dark:text-slate-300 capitalize">
+              {rebalanceFrequency === 'threshold' 
+                ? `Threshold (±${rebalanceThreshold.toFixed(1)}%)` 
+                : rebalanceFrequency === 'none' 
+                ? 'No Rebalancing' 
+                : `Calendar (${rebalanceFrequency})`}
+            </p>
+            <p className="text-[10px] text-slate-500">
+              {model === 'gbm' 
+                ? `${useGarch ? 'GARCH Vol' : 'Static Vol'} · ${useMertonJumps ? 'Jumps' : 'No Jumps'}`
+                : `Block Size: ${bootstrapBlockSize} days`}
+            </p>
+          </div>
         </div>
       </div>
 

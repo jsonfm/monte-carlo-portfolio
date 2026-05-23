@@ -200,44 +200,75 @@ export function MetricsDisplay({
 
       {/* Simulation Risk & Probabilities Displays */}
       {sMetrics && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-slate-900/20 p-4 border border-slate-200 dark:border-slate-800/40 rounded-2xl shadow-sm">
-          {/* Probability of Loss */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-              <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <ShieldAlert className="w-4 h-4 text-rose-500 dark:text-rose-400" /> Probability of Capital Loss
-                <InfoTooltip content={`Likelihood that the final portfolio value drops below the initial investment of ${formatCurrency(sMetrics.initialValue)} after ${simulationData.percentiles.p50.length - 1} years.`} />
-              </span>
-              <span className={sMetrics.probabilityOfLoss > 0.3 ? 'text-rose-500 dark:text-rose-400' : 'text-slate-700 dark:text-slate-200'}>
-                {formatProbability(sMetrics.probabilityOfLoss, 1, false)}
-              </span>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white dark:bg-slate-900/20 p-4 border border-slate-200 dark:border-slate-800/40 rounded-2xl shadow-sm">
+            {/* Probability of Loss */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <ShieldAlert className="w-4 h-4 text-rose-500 dark:text-rose-400" /> Probability of Capital Loss
+                  <InfoTooltip content={`Likelihood that the final portfolio value drops below the initial investment of ${formatCurrency(sMetrics.initialValue)} after ${simulationData.percentiles.p50.length - 1} years.`} />
+                </span>
+                <span className={sMetrics.probabilityOfLoss > 0.3 ? 'text-rose-500 dark:text-rose-400' : 'text-slate-700 dark:text-slate-200'}>
+                  {formatProbability(sMetrics.probabilityOfLoss, 1, false)}
+                </span>
+              </div>
+              <div className="h-2 bg-slate-100 dark:bg-slate-950 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800">
+                <div 
+                  className="h-full bg-gradient-to-r from-yellow-400 to-rose-500 dark:from-yellow-500 dark:to-rose-500 rounded-full transition-all duration-500" 
+                  style={{ width: `${sMetrics.probabilityOfLoss * 100}%` }}
+                />
+              </div>
             </div>
-            <div className="h-2 bg-slate-100 dark:bg-slate-950 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800">
-              <div 
-                className="h-full bg-gradient-to-r from-yellow-400 to-rose-500 dark:from-yellow-500 dark:to-rose-500 rounded-full transition-all duration-500" 
-                style={{ width: `${sMetrics.probabilityOfLoss * 100}%` }}
-              />
+
+            {/* Probability of Double/Target */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
+                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" /> Probability of Doubling Capital
+                  <InfoTooltip content={`Likelihood that the final portfolio value exceeds ${formatCurrency(sMetrics.initialValue * 2)} (200% return) after ${simulationData.percentiles.p50.length - 1} years.`} />
+                </span>
+                <span className="text-emerald-500 dark:text-emerald-400">
+                  {formatProbability(sMetrics.probabilityOfTarget, 1, true)}
+                </span>
+              </div>
+              <div className="h-2 bg-slate-100 dark:bg-slate-950 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800">
+                <div 
+                  className="h-full bg-gradient-to-r from-blue-400 to-emerald-400 dark:from-blue-500 dark:to-emerald-500 rounded-full transition-all duration-500" 
+                  style={{ width: `${sMetrics.probabilityOfTarget * 100}%` }}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Probability of Double/Target */}
-          <div className="space-y-2">
-            <div className="flex justify-between text-xs font-bold uppercase tracking-wider">
-              <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-                <Sparkles className="w-4 h-4 text-amber-500 dark:text-amber-400" /> Probability of Doubling Capital
-                <InfoTooltip content={`Likelihood that the final portfolio value exceeds ${formatCurrency(sMetrics.initialValue * 2)} (200% return) after ${simulationData.percentiles.p50.length - 1} years.`} />
-              </span>
-              <span className="text-emerald-500 dark:text-emerald-400">
-                {formatProbability(sMetrics.probabilityOfTarget, 1, true)}
-              </span>
+          {/* Frictions and Realism Report Card */}
+          {(sMetrics.medianTotalFeesPaid > 0 || sMetrics.medianTotalTaxesPaid > 0 || sMetrics.medianInflationAdjustedValue !== sMetrics.medianFinalValue) && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-amber-500/5 dark:bg-amber-500/5 p-4 border border-amber-500/10 rounded-2xl shadow-sm">
+              <div className="space-y-1">
+                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">Median Transaction Fees</p>
+                <p className="text-lg font-extrabold text-slate-800 dark:text-slate-200">
+                  {formatCurrency(sMetrics.medianTotalFeesPaid)}
+                </p>
+                <p className="text-[9px] text-slate-500">Cumulative fees & slippage over horizon</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">Median Capital Gains Tax</p>
+                <p className="text-lg font-extrabold text-slate-800 dark:text-slate-200">
+                  {formatCurrency(sMetrics.medianTotalTaxesPaid)}
+                </p>
+                <p className="text-[9px] text-slate-500">Total taxes incurred from rebalancing/sales</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[10px] text-amber-600 dark:text-amber-400 font-bold uppercase tracking-wider">Real Purchasing Power</p>
+                <p className="text-lg font-extrabold text-slate-800 dark:text-slate-200">
+                  {formatCurrency(sMetrics.medianInflationAdjustedValue)}
+                </p>
+                <p className="text-[9px] text-slate-500">Final value in inflation-discounted Year 0 dollars</p>
+              </div>
             </div>
-            <div className="h-2 bg-slate-100 dark:bg-slate-950 rounded-full overflow-hidden border border-slate-200 dark:border-slate-800">
-              <div 
-                className="h-full bg-gradient-to-r from-blue-400 to-emerald-400 dark:from-blue-500 dark:to-emerald-500 rounded-full transition-all duration-500" 
-                style={{ width: `${sMetrics.probabilityOfTarget * 100}%` }}
-              />
-            </div>
-          </div>
+          )}
         </div>
       )}
       </div>

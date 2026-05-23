@@ -92,6 +92,42 @@ export function MethodologyDocs() {
             </li>
           </ul>
         </div>
+
+        {/* GARCH(1,1) Section */}
+        <div className="bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800/40 rounded-xl space-y-2 col-span-1 md:col-span-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-500 dark:text-amber-400 uppercase tracking-wide">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>GARCH(1,1) Volatility Clustering</span>
+          </div>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            In standard Geometric Brownian Motion, asset volatility is assumed to be constant. In reality, market volatility is time-varying and displays <strong>volatility clustering</strong>: quiet periods are followed by quiet periods, and high-volatility shocks are followed by sustained high volatility. We implement a GARCH(1,1) recurrence model:
+          </p>
+          <div className="bg-white dark:bg-slate-900/50 p-2.5 rounded-lg text-slate-800 dark:text-slate-300 overflow-x-auto border border-slate-200 dark:border-slate-800/50">
+            <BlockMath math={"h_t = \\omega + \\alpha \\varepsilon_{t-1}^2 + \\beta h_{t-1}"} />
+          </div>
+          <p className="text-[10px] text-slate-500 leading-relaxed">
+            Where <InlineMath math={"h_t"} /> is the conditional daily variance, <InlineMath math={"\\omega"} /> is the baseline variance constant calibrated dynamically from historical annualized volatility, <InlineMath math={"\\varepsilon_{t-1}"} /> is the shock residual of the asset return on the previous day, and <InlineMath math={"h_{t-1}"} /> is the previous day's conditional variance.
+          </p>
+        </div>
+
+        {/* Merton & Block Bootstrap Section */}
+        <div className="bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800/40 rounded-xl space-y-2 col-span-1 md:col-span-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-wide">
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Black Swans (Merton Jump-Diffusion) & Block Bootstrap</span>
+          </div>
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            To incorporate realistic systemic tail risk and serial autocorrelation:
+          </p>
+          <ul className="text-[10px] text-slate-500 space-y-2 pl-4 list-disc leading-relaxed">
+            <li>
+              <strong>Merton Jump Diffusion:</strong> Adds sudden, discontinuous Poisson-distributed market shocks to represent major global crashes (Black Swans). The SDE includes a jump multiplier <InlineMath math={"(Y_t - 1) dN_t"} />, where jump arrivals <InlineMath math={"dN_t"} /> have a Poisson intensity of <InlineMath math={"\\lambda"} /> (shocks per year), and the jump size log-return follows <InlineMath math={"\\ln(Y_t) \\sim \\mathcal{N}(\\mu_J, \\sigma_J^2)"} />.
+            </li>
+            <li>
+              <strong>Moving Block Bootstrap:</strong> In Bootstrapping mode, instead of sampling individual days independently (which destroys all momentum, trends, and autocorrelation of returns), we sample contiguous <strong>blocks of days</strong> (default 10 days) sequentially. This naturally preserves short-term historical dependencies and momentum structures directly from market history.
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );

@@ -167,6 +167,50 @@ export function randomNormal(): number {
 }
 
 /**
+ * Calibrates GARCH(1,1) parameters based on historical annualized volatility.
+ * Unconditional daily variance V_L = (annualVolatility^2) / 252.
+ * We assume alpha = 0.08 and beta = 0.90, so omega = V_L * (1 - alpha - beta) = V_L * 0.02.
+ */
+export interface GarchParameters {
+  omega: number;
+  alpha: number;
+  beta: number;
+}
+
+export function calibrateGarchParameters(annualVolatility: number): GarchParameters {
+  const dailyVariance = Math.pow(annualVolatility, 2) / 252;
+  const alpha = 0.08;
+  const beta = 0.90;
+  const omega = dailyVariance * (1 - alpha - beta);
+  return { omega, alpha, beta };
+}
+
+/**
+ * Merton Jump Diffusion Jump shock generation
+ * Returns the jump return rate (Y_t - 1) if a jump occurs, otherwise 0.
+ * In step dt = 1/252, probability of a jump is lambda * dt.
+ */
+export function generateMertonJump(
+  lambda: number, // Jumps per year (e.g., 1.5)
+  muJ: number,    // Mean jump size log-return (e.g., -0.05)
+  sigmaJ: number, // Jump volatility (e.g., 0.10)
+  dt: number      // Time step (e.g., 1 / 252)
+): number {
+  if (Math.random() < lambda * dt) {
+    const jumpZ = randomNormal();
+    return Math.exp(muJ + sigmaJ * jumpZ) - 1;
+  }
+  return 0;
+}
+
+/**
+ * Expected jump size premium k = E[Y_t - 1] = exp(muJ + 0.5 * sigmaJ^2) - 1
+ */
+export function calculateMertonCompensator(muJ: number, sigmaJ: number): number {
+  return Math.exp(muJ + 0.5 * Math.pow(sigmaJ, 2)) - 1;
+}
+
+/**
  * Generates a vector of correlated normal variables using Cholesky factor L
  */
 export function generateCorrelatedNormals(L: number[][]): number[] {

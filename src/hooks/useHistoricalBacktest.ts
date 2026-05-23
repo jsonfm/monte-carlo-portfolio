@@ -13,7 +13,18 @@ interface UseHistoricalBacktestProps {
   horizonYears: number;
   simulationsCount: number;
   model: 'gbm' | 'bootstrap';
-  rebalanceFrequency: 'none' | 'monthly' | 'annually';
+  rebalanceFrequency: 'none' | 'monthly' | 'annually' | 'threshold';
+  monthlyContribution: number;
+  monthlyWithdrawal: number;
+  adjustInflation: boolean;
+  annualInflationRate: number;
+  isTaxable: boolean;
+  capitalGainsTaxRate: number;
+  transactionFeeRate: number;
+  rebalanceThreshold: number;
+  bootstrapBlockSize: number;
+  useGarch: boolean;
+  useMertonJumps: boolean;
 }
 
 export function useHistoricalBacktest({
@@ -26,6 +37,17 @@ export function useHistoricalBacktest({
   simulationsCount,
   model,
   rebalanceFrequency,
+  monthlyContribution,
+  monthlyWithdrawal,
+  adjustInflation,
+  annualInflationRate,
+  isTaxable,
+  capitalGainsTaxRate,
+  transactionFeeRate,
+  rebalanceThreshold,
+  bootstrapBlockSize,
+  useGarch,
+  useMertonJumps,
 }: UseHistoricalBacktestProps) {
   const [historicalMetrics, setHistoricalMetrics] = useState<HistoricalMetrics | null>(null);
   const [historicalLoading, setHistoricalLoading] = useState<boolean>(false);
@@ -246,6 +268,17 @@ export function useHistoricalBacktest({
           simulationsCount,
           model,
           rebalanceFrequency,
+          monthlyContribution,
+          monthlyWithdrawal,
+          adjustInflation,
+          annualInflationRate,
+          isTaxable,
+          capitalGainsTaxRate,
+          transactionFeeRate,
+          rebalanceThreshold,
+          bootstrapBlockSize,
+          useGarch,
+          useMertonJumps,
         });
       }
     } catch (err) {
@@ -264,6 +297,17 @@ export function useHistoricalBacktest({
     simulationsCount,
     model,
     rebalanceFrequency,
+    monthlyContribution,
+    monthlyWithdrawal,
+    adjustInflation,
+    annualInflationRate,
+    isTaxable,
+    capitalGainsTaxRate,
+    transactionFeeRate,
+    rebalanceThreshold,
+    bootstrapBlockSize,
+    useGarch,
+    useMertonJumps,
     runMonteCarlo,
   ]);
 
@@ -321,6 +365,17 @@ export function useHistoricalBacktest({
       simulationsCount,
       model,
       rebalanceFrequency,
+      monthlyContribution,
+      monthlyWithdrawal,
+      adjustInflation,
+      annualInflationRate,
+      isTaxable,
+      capitalGainsTaxRate,
+      transactionFeeRate,
+      rebalanceThreshold,
+      bootstrapBlockSize,
+      useGarch,
+      useMertonJumps,
     });
   }, [
     assets,
@@ -331,6 +386,17 @@ export function useHistoricalBacktest({
     simulationsCount,
     model,
     rebalanceFrequency,
+    monthlyContribution,
+    monthlyWithdrawal,
+    adjustInflation,
+    annualInflationRate,
+    isTaxable,
+    capitalGainsTaxRate,
+    transactionFeeRate,
+    rebalanceThreshold,
+    bootstrapBlockSize,
+    useGarch,
+    useMertonJumps,
     runMonteCarlo,
   ]);
 

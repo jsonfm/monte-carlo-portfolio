@@ -1,4 +1,5 @@
-import { Play, RotateCcw, AlertTriangle, Coins, TrendingUp, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Play, RotateCcw, AlertTriangle, Coins, TrendingUp, Sparkles, ChevronDown, ChevronUp, Settings2 } from 'lucide-react';
 import { PRESET_BENCHMARKS } from '@/services/dataService';
 import InfoTooltip from '@/components/InfoTooltip';
 import type { HistoricalRange } from '@/types';
@@ -12,12 +13,34 @@ interface SimulationControlsProps {
   setSimulationsCount: (v: number) => void;
   model: 'gbm' | 'bootstrap';
   setModel: (v: 'gbm' | 'bootstrap') => void;
-  rebalanceFrequency: 'none' | 'monthly' | 'annually';
-  setRebalanceFrequency: (v: 'none' | 'monthly' | 'annually') => void;
+  rebalanceFrequency: 'none' | 'monthly' | 'annually' | 'threshold';
+  setRebalanceFrequency: (v: 'none' | 'monthly' | 'annually' | 'threshold') => void;
   benchmarkTicker: string;
   setBenchmarkTicker: (v: string) => void;
   historicalRange: HistoricalRange;
   setHistoricalRange: (v: HistoricalRange) => void;
+  monthlyContribution: number;
+  setMonthlyContribution: (v: number) => void;
+  monthlyWithdrawal: number;
+  setMonthlyWithdrawal: (v: number) => void;
+  adjustInflation: boolean;
+  setAdjustInflation: (v: boolean) => void;
+  annualInflationRate: number;
+  setAnnualInflationRate: (v: number) => void;
+  isTaxable: boolean;
+  setIsTaxable: (v: boolean) => void;
+  capitalGainsTaxRate: number;
+  setCapitalGainsTaxRate: (v: number) => void;
+  transactionFeeRate: number;
+  setTransactionFeeRate: (v: number) => void;
+  rebalanceThreshold: number;
+  setRebalanceThreshold: (v: number) => void;
+  bootstrapBlockSize: number;
+  setBootstrapBlockSize: (v: number) => void;
+  useGarch: boolean;
+  setUseGarch: (v: boolean) => void;
+  useMertonJumps: boolean;
+  setUseMertonJumps: (v: boolean) => void;
   onRunSimulation: () => void;
   onReset: () => void;
   isValid: boolean;
@@ -39,11 +62,34 @@ export function SimulationControls({
   setBenchmarkTicker,
   historicalRange,
   setHistoricalRange,
+  monthlyContribution,
+  setMonthlyContribution,
+  monthlyWithdrawal,
+  setMonthlyWithdrawal,
+  adjustInflation,
+  setAdjustInflation,
+  annualInflationRate,
+  setAnnualInflationRate,
+  isTaxable,
+  setIsTaxable,
+  capitalGainsTaxRate,
+  setCapitalGainsTaxRate,
+  transactionFeeRate,
+  setTransactionFeeRate,
+  rebalanceThreshold,
+  setRebalanceThreshold,
+  bootstrapBlockSize,
+  setBootstrapBlockSize,
+  useGarch,
+  setUseGarch,
+  useMertonJumps,
+  setUseMertonJumps,
   onRunSimulation,
   onReset,
   isValid,
   loading,
 }: SimulationControlsProps) {
+  const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false);
   return (
     <div className="space-y-5 bg-slate-50 dark:bg-slate-900/10 p-5 border border-slate-200 dark:border-slate-800/40 rounded-2xl transition-colors">
       <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-300">Simulation Settings</h3>
@@ -192,15 +238,15 @@ export function SimulationControls({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">Rebalancing Frequency</label>
-            <InfoTooltip content="Determines how often the asset weights are reset back to your original target allocation. This prevents faster-growing assets from over-concentrating your portfolio and controls risk over time." />
+            <InfoTooltip content="Determines how often the asset weights are reset back to your original target allocation. Choose calendar intervals (monthly, annually) or threshold-based rebalancing when weights drift." />
           </div>
-          <div className="grid grid-cols-3 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
-            {(['none', 'monthly', 'annually'] as const).map((freq) => (
+          <div className="grid grid-cols-4 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
+            {(['none', 'monthly', 'annually', 'threshold'] as const).map((freq) => (
               <button
                 key={freq}
                 type="button"
                 onClick={() => setRebalanceFrequency(freq)}
-                className={`py-1 px-2 rounded-md text-[10px] font-bold uppercase tracking-wide cursor-pointer transition-all ${
+                className={`py-1 px-1 rounded-md text-[9px] font-bold uppercase tracking-wide cursor-pointer transition-all ${
                   rebalanceFrequency === freq
                     ? 'bg-purple-500 dark:bg-purple-600 text-white shadow-sm'
                     : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
@@ -211,6 +257,224 @@ export function SimulationControls({
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Group 4: Advanced Realism & Frictions (Expandable Amber Theme) */}
+      <div className="border-l-2 border-amber-500 dark:border-amber-400 pl-3 py-1 space-y-3 bg-amber-50/10 dark:bg-amber-950/5 p-3 rounded-r-xl">
+        <button
+          type="button"
+          onClick={() => setIsAdvancedExpanded(!isAdvancedExpanded)}
+          className="w-full flex items-center justify-between text-left cursor-pointer group animate-none"
+        >
+          <div className="flex items-center gap-1.5">
+            <Settings2 className="w-3.5 h-3.5 text-amber-500 group-hover:rotate-45 transition-transform" />
+            <h4 className="text-[11px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Advanced Realism & Frictions</h4>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="text-[9px] bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 font-extrabold px-1.5 py-0.5 rounded uppercase tracking-wider">
+              {isAdvancedExpanded ? 'Hide' : 'Expand'}
+            </span>
+            {isAdvancedExpanded ? (
+              <ChevronUp className="w-3.5 h-3.5 text-amber-500" />
+            ) : (
+              <ChevronDown className="w-3.5 h-3.5 text-amber-500" />
+            )}
+          </div>
+        </button>
+
+        {isAdvancedExpanded && (
+          <div className="space-y-4 pt-1 border-t border-amber-500/10 dark:border-amber-500/5 mt-1">
+            {/* 1. Monthly Cash Flows */}
+            <div className="space-y-2">
+              <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Periodic Cash Flows</h5>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Monthly Deposit ($)</label>
+                  <input
+                    type="text"
+                    value={monthlyContribution.toLocaleString()}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                      setMonthlyContribution(val);
+                    }}
+                    className="w-full text-xs font-bold bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg py-1 px-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-amber-500 transition-colors shadow-sm"
+                  />
+                </div>
+                <div>
+                  <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Monthly Withdrawal ($)</label>
+                  <input
+                    type="text"
+                    value={monthlyWithdrawal.toLocaleString()}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value.replace(/[^0-9]/g, '')) || 0;
+                      setMonthlyWithdrawal(val);
+                    }}
+                    className="w-full text-xs font-bold bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg py-1 px-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-amber-500 transition-colors shadow-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Inflation adjustment */}
+            <div className="space-y-2 border-t border-amber-500/10 pt-3">
+              <div className="flex items-center justify-between">
+                <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Inflation (Real Return Drag)</h5>
+                <label className="relative inline-flex h-4 w-7 items-center rounded-full cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={adjustInflation}
+                    onChange={(e) => setAdjustInflation(e.target.checked)}
+                  />
+                  <div className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors duration-200 ease-in-out ${adjustInflation ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                    <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition duration-200 ease-in-out ${adjustInflation ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
+                  </div>
+                </label>
+              </div>
+              
+              {adjustInflation && (
+                <div>
+                  <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Annual Inflation Rate (%)</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="15"
+                      step="0.1"
+                      value={annualInflationRate * 100}
+                      onChange={(e) => setAnnualInflationRate(parseFloat(e.target.value) / 100)}
+                      className="flex-1 h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                    />
+                    <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 w-10 text-right">{(annualInflationRate * 100).toFixed(1)}%</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 3. Transaction Costs & Taxes */}
+            <div className="space-y-2 border-t border-amber-500/10 pt-3">
+              <div className="flex items-center justify-between">
+                <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Taxable Account Model</h5>
+                <label className="relative inline-flex h-4 w-7 items-center rounded-full cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={isTaxable}
+                    onChange={(e) => setIsTaxable(e.target.checked)}
+                  />
+                  <div className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors duration-200 ease-in-out ${isTaxable ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                    <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition duration-200 ease-in-out ${isTaxable ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
+                  </div>
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                {isTaxable && (
+                  <div>
+                    <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Capital Gains Tax (%)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="50"
+                      value={capitalGainsTaxRate * 100}
+                      onChange={(e) => setCapitalGainsTaxRate(Math.min(50, Math.max(0, parseFloat(e.target.value) || 0)) / 100)}
+                      className="w-full text-xs font-bold bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg py-1 px-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-amber-500 transition-colors shadow-sm"
+                    />
+                  </div>
+                )}
+                <div className={isTaxable ? "" : "col-span-2"}>
+                  <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Fee & Slippage per Trade (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="5"
+                    step="0.01"
+                    value={transactionFeeRate * 100}
+                    onChange={(e) => setTransactionFeeRate(Math.min(5, Math.max(0, parseFloat(e.target.value) || 0)) / 100)}
+                    className="w-full text-xs font-bold bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg py-1 px-2 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-amber-500 transition-colors shadow-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* 4. Advanced Quantitative Parameters */}
+            <div className="space-y-2 border-t border-amber-500/10 pt-3">
+              <h5 className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Advanced Math Engine</h5>
+              
+              {model === 'gbm' && (
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center justify-between p-1.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg">
+                    <label className="text-[9px] text-slate-600 dark:text-slate-400 font-extrabold uppercase tracking-wide">GARCH(1,1) Vol</label>
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      id="useGarch"
+                      checked={useGarch}
+                      onChange={(e) => setUseGarch(e.target.checked)}
+                    />
+                    <label htmlFor="useGarch" className="relative inline-flex h-4 w-7 items-center rounded-full cursor-pointer select-none">
+                      <div className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors duration-200 ease-in-out ${useGarch ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                        <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition duration-200 ease-in-out ${useGarch ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
+                      </div>
+                    </label>
+                  </div>
+
+                  <div className="flex items-center justify-between p-1.5 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg">
+                    <label className="text-[9px] text-slate-600 dark:text-slate-400 font-extrabold uppercase tracking-wide">Merton Jumps</label>
+                    <input
+                      type="checkbox"
+                      className="sr-only"
+                      id="useMertonJumps"
+                      checked={useMertonJumps}
+                      onChange={(e) => setUseMertonJumps(e.target.checked)}
+                    />
+                    <label htmlFor="useMertonJumps" className="relative inline-flex h-4 w-7 items-center rounded-full cursor-pointer select-none">
+                      <div className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors duration-200 ease-in-out ${useMertonJumps ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
+                        <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition duration-200 ease-in-out ${useMertonJumps ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {model === 'bootstrap' && (
+                <div>
+                  <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Bootstrap Block Size (Days)</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="2"
+                      max="60"
+                      step="1"
+                      value={bootstrapBlockSize}
+                      onChange={(e) => setBootstrapBlockSize(parseInt(e.target.value))}
+                      className="flex-1 h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                    />
+                    <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 w-8 text-right">{bootstrapBlockSize}d</span>
+                  </div>
+                </div>
+              )}
+
+              {rebalanceFrequency === 'threshold' && (
+                <div>
+                  <label className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Rebalance Trigger Threshold (%)</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="range"
+                      min="1"
+                      max="20"
+                      step="0.5"
+                      value={rebalanceThreshold}
+                      onChange={(e) => setRebalanceThreshold(parseFloat(e.target.value))}
+                      className="flex-1 h-1 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                    />
+                    <span className="text-[11px] font-extrabold text-slate-700 dark:text-slate-300 w-10 text-right">{rebalanceThreshold.toFixed(1)}%</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Big Action Buttons */}

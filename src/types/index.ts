@@ -29,7 +29,18 @@ export interface PortfolioConfig {
   simulationsCount: number;
   model: 'gbm' | 'bootstrap';
   benchmarkTicker: string;
-  rebalanceFrequency: 'none' | 'monthly' | 'annually';
+  rebalanceFrequency: 'none' | 'monthly' | 'annually' | 'threshold';
+  monthlyContribution: number;
+  monthlyWithdrawal: number;
+  adjustInflation: boolean;
+  annualInflationRate: number;
+  isTaxable: boolean;
+  capitalGainsTaxRate: number;
+  transactionFeeRate: number;
+  rebalanceThreshold: number;
+  bootstrapBlockSize: number;
+  useGarch: boolean;
+  useMertonJumps: boolean;
 }
 
 export interface PercentilePath {
@@ -58,6 +69,9 @@ export interface SimulationSummary {
     conditionalValueAtRisk95: number; // 95% CVaR (Expected Shortfall)
     probabilityOfLoss: number; // Probability of ending below initial investment
     probabilityOfTarget: number; // Probability of beating a target or doubling
+    medianTotalFeesPaid: number;
+    medianTotalTaxesPaid: number;
+    medianInflationAdjustedValue: number;
   };
 }
 

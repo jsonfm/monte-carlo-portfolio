@@ -39,9 +39,22 @@ export function usePortfolioState() {
   const [horizonYears, setHorizonYears] = useState<number>(10);
   const [simulationsCount, setSimulationsCount] = useState<number>(5000);
   const [model, setModel] = useState<'gbm' | 'bootstrap'>('gbm');
-  const [rebalanceFrequency, setRebalanceFrequency] = useState<'none' | 'monthly' | 'annually'>('none');
+  const [rebalanceFrequency, setRebalanceFrequency] = useState<'none' | 'monthly' | 'annually' | 'threshold'>('none');
   const [benchmarkTicker, setBenchmarkTicker] = useState<string>('SPY');
   const [historicalRange, setHistoricalRange] = useState<HistoricalRange>('5y');
+
+  // Advanced Realism & Frictions States
+  const [monthlyContribution, setMonthlyContribution] = useState<number>(0);
+  const [monthlyWithdrawal, setMonthlyWithdrawal] = useState<number>(0);
+  const [adjustInflation, setAdjustInflation] = useState<boolean>(false);
+  const [annualInflationRate, setAnnualInflationRate] = useState<number>(0.03);
+  const [isTaxable, setIsTaxable] = useState<boolean>(false);
+  const [capitalGainsTaxRate, setCapitalGainsTaxRate] = useState<number>(0.15);
+  const [transactionFeeRate, setTransactionFeeRate] = useState<number>(0.001); // 0.1% default
+  const [rebalanceThreshold, setRebalanceThreshold] = useState<number>(5); // 5% default
+  const [bootstrapBlockSize, setBootstrapBlockSize] = useState<number>(10); // 10 days default
+  const [useGarch, setUseGarch] = useState<boolean>(false);
+  const [useMertonJumps, setUseMertonJumps] = useState<boolean>(false);
 
   // Custom uploaded CSVs: ticker -> array of { date, price }
   const [customCsvPrices, setCustomCsvPrices] = useState<{ [ticker: string]: HistoricalPrice[] }>({});
@@ -62,6 +75,17 @@ export function usePortfolioState() {
     setRebalanceFrequency('none');
     setBenchmarkTicker('SPY');
     setHistoricalRange('5y');
+    setMonthlyContribution(0);
+    setMonthlyWithdrawal(0);
+    setAdjustInflation(false);
+    setAnnualInflationRate(0.03);
+    setIsTaxable(false);
+    setCapitalGainsTaxRate(0.15);
+    setTransactionFeeRate(0.001);
+    setRebalanceThreshold(5);
+    setBootstrapBlockSize(10);
+    setUseGarch(false);
+    setUseMertonJumps(false);
     setCustomCsvPrices({});
     setCustomCsvUploaded({});
   };
@@ -85,6 +109,28 @@ export function usePortfolioState() {
     setBenchmarkTicker,
     historicalRange,
     setHistoricalRange,
+    monthlyContribution,
+    setMonthlyContribution,
+    monthlyWithdrawal,
+    setMonthlyWithdrawal,
+    adjustInflation,
+    setAdjustInflation,
+    annualInflationRate,
+    setAnnualInflationRate,
+    isTaxable,
+    setIsTaxable,
+    capitalGainsTaxRate,
+    setCapitalGainsTaxRate,
+    transactionFeeRate,
+    setTransactionFeeRate,
+    rebalanceThreshold,
+    setRebalanceThreshold,
+    bootstrapBlockSize,
+    setBootstrapBlockSize,
+    useGarch,
+    setUseGarch,
+    useMertonJumps,
+    setUseMertonJumps,
     customCsvPrices,
     customCsvUploaded,
     handleUploadCSV,

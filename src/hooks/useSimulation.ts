@@ -29,7 +29,18 @@ export interface RunMonteCarloOptions {
   horizonYears: number;
   simulationsCount: number;
   model: 'gbm' | 'bootstrap';
-  rebalanceFrequency: 'none' | 'monthly' | 'annually';
+  rebalanceFrequency: 'none' | 'monthly' | 'annually' | 'threshold';
+  monthlyContribution: number;
+  monthlyWithdrawal: number;
+  adjustInflation: boolean;
+  annualInflationRate: number;
+  isTaxable: boolean;
+  capitalGainsTaxRate: number;
+  transactionFeeRate: number;
+  rebalanceThreshold: number;
+  bootstrapBlockSize: number;
+  useGarch: boolean;
+  useMertonJumps: boolean;
 }
 
 interface WorkerSuccessResponse {
@@ -74,6 +85,17 @@ export function useSimulation() {
       simulationsCount,
       model,
       rebalanceFrequency,
+      monthlyContribution,
+      monthlyWithdrawal,
+      adjustInflation,
+      annualInflationRate,
+      isTaxable,
+      capitalGainsTaxRate,
+      transactionFeeRate,
+      rebalanceThreshold,
+      bootstrapBlockSize,
+      useGarch,
+      useMertonJumps,
     } = options;
 
     // Terminate existing worker if it's running to prevent race conditions
@@ -90,6 +112,27 @@ export function useSimulation() {
         new URL('../workers/simulationWorker.ts', import.meta.url),
         { type: 'module' }
       );
+
+      workerRef.current.postMessage({
+        assets,
+        assetsHistory,
+        initialInvestment,
+        horizonYears,
+        simulationsCount,
+        model,
+        rebalanceFrequency,
+        monthlyContribution,
+        monthlyWithdrawal,
+        adjustInflation,
+        annualInflationRate,
+        isTaxable,
+        capitalGainsTaxRate,
+        transactionFeeRate,
+        rebalanceThreshold,
+        bootstrapBlockSize,
+        useGarch,
+        useMertonJumps,
+      });
 
       workerRef.current.onmessage = (e: MessageEvent<WorkerResponse>) => {
         const response = e.data;
@@ -121,17 +164,6 @@ export function useSimulation() {
           workerRef.current = null;
         }
       };
-
-      // Post parameters to the worker to kick off simulation
-      workerRef.current.postMessage({
-        assets,
-        assetsHistory,
-        initialInvestment,
-        horizonYears,
-        simulationsCount,
-        model,
-        rebalanceFrequency,
-      });
 
     } catch (err) {
       if (isMounted.current) {
