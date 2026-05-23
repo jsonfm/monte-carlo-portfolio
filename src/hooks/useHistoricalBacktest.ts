@@ -8,7 +8,6 @@ interface UseHistoricalBacktestProps {
   assets: Asset[];
   benchmarkTicker: string;
   historicalRange: HistoricalRange;
-  customCsvPrices: { [ticker: string]: HistoricalPrice[] };
   initialInvestment: number;
   horizonYears: number;
   simulationsCount: number;
@@ -31,7 +30,6 @@ export function useHistoricalBacktest({
   assets,
   benchmarkTicker,
   historicalRange,
-  customCsvPrices,
   initialInvestment,
   horizonYears,
   simulationsCount,
@@ -92,7 +90,7 @@ export function useHistoricalBacktest({
     // Check assets cache
     if (!needsNetworkFetch) {
       for (const asset of assets) {
-        if (!updatedCache[asset.ticker] && !customCsvPrices[asset.ticker]) {
+        if (!updatedCache[asset.ticker]) {
           needsNetworkFetch = true;
           break;
         }
@@ -116,23 +114,13 @@ export function useHistoricalBacktest({
       // 1. Fetch/Resolve histories for all current assets
       const updatedCache = { ...assetsHistoriesCacheRef.current };
 
-      // Ensure any custom CSV uploaded prices are copied to cache
-      Object.entries(customCsvPrices).forEach(([ticker, prices]) => {
-        updatedCache[ticker] = prices;
-      });
-
       for (const asset of assets) {
         let prices = updatedCache[asset.ticker];
 
         // If not in cache (or forceFetch), fetch it!
         if (!prices || forceFetch) {
-          // Check if it's a custom uploaded CSV asset first
-          if (customCsvPrices[asset.ticker]) {
-            prices = customCsvPrices[asset.ticker];
-          } else {
-            // Fetch from Yahoo Finance
-            prices = await fetchHistoricalData(asset.ticker, '10y');
-          }
+          // Fetch from Yahoo Finance
+          prices = await fetchHistoricalData(asset.ticker, '10y');
           updatedCache[asset.ticker] = prices;
         }
 
@@ -290,7 +278,6 @@ export function useHistoricalBacktest({
     assets,
     benchmarkTicker,
     historicalRange,
-    customCsvPrices,
     isAllocationValid,
     initialInvestment,
     horizonYears,

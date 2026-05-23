@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Trash2, Upload, AlertCircle, CheckCircle2, ChevronDown, ChevronUp, Search, Loader2 } from 'lucide-react';
-import type { Asset, AssetType, HistoricalPrice } from '@/types';
+import { useState, useEffect, useRef } from 'react';
+import { Trash2, AlertCircle, ChevronDown, ChevronUp, Search, Loader2 } from 'lucide-react';
+import type { Asset, AssetType } from '@/types';
 import { getAssetColor } from '@/utils/colors';
-import { parseCSVData, searchAssetsAPI } from '@/services/dataService';
+import { searchAssetsAPI } from '@/services/dataService';
 import commonAssets from '@/data/commonAssets.json';
 
 interface AssetInputProps {
   assets: Asset[];
   onChange: (assets: Asset[]) => void;
-  onUploadCSV: (ticker: string, name: string, prices: HistoricalPrice[]) => void;
-  customCsvUploaded: { [ticker: string]: string };
 }
 
 const SUGGESTED_ASSETS = [
@@ -28,8 +26,6 @@ interface AssetItem {
 export function AssetInput({
   assets,
   onChange,
-  onUploadCSV,
-  customCsvUploaded,
 }: AssetInputProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<{ticker: string, name: string, type: AssetType}[]>([]);
@@ -38,11 +34,6 @@ export function AssetInput({
 
   const [error, setError] = useState<string | null>(null);
 
-  const [csvTicker, setCsvTicker] = useState('CUSTOM1');
-  const [csvName, setCsvName] = useState('My Custom Asset');
-  const [csvFile, setCsvFile] = useState<File | null>(null);
-  const [csvSuccess, setCsvSuccess] = useState<string | null>(null);
-  const [isCsvOpen, setIsCsvOpen] = useState(false);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [isAllocationOpen, setIsAllocationOpen] = useState(true);
 
@@ -78,46 +69,6 @@ export function AssetInput({
     const updated = [...assets];
     updated[index].weight = Math.min(100, Math.max(0, weight));
     onChange(updated);
-  };
-
-  const handleCsvUpload = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!csvFile) {
-      setError('Please select a CSV file');
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      try {
-        const text = event.target?.result as string;
-        const prices = parseCSVData(text);
-        
-        const cleanTicker = csvTicker.trim().toUpperCase();
-        if (assets.some(a => a.ticker === cleanTicker)) {
-          throw new Error(`Ticker ${cleanTicker} is already in use`);
-        }
-
-        onUploadCSV(cleanTicker, csvName.trim(), prices);
-        handleAddAsset({
-          ticker: cleanTicker,
-          name: csvName.trim(),
-          type: 'stock',
-          weight: 10,
-        });
-
-        setCsvSuccess(`Successfully loaded ${prices.length} days of historical data!`);
-        setError(null);
-        setCsvFile(null);
-        const currentNum = parseInt(csvTicker.replace(/\D/g, '')) || 1;
-        setCsvTicker(`CUSTOM${currentNum + 1}`);
-        setIsCsvOpen(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error parsing CSV file');
-        setCsvSuccess(null);
-      }
-    };
-    reader.readAsText(csvFile);
   };
 
   const distributeEvenly = () => {
@@ -357,13 +308,6 @@ export function AssetInput({
               </div>
             )}
 
-            {csvSuccess && (
-              <div className="flex items-center gap-2 p-3 text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl">
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
-                <span>{csvSuccess}</span>
-              </div>
-            )}
-
             {assets.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 px-4 text-center border border-dashed border-slate-300 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-950/20 transition-colors">
                 <AlertCircle className="w-5 h-5 text-slate-400 dark:text-slate-600 mb-2" />
@@ -373,7 +317,6 @@ export function AssetInput({
             ) : (
               <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
                 {assets.map((asset, index) => {
-                  const isCsv = !!customCsvUploaded[asset.ticker];
                   return (
                     <div
                       key={asset.ticker}
@@ -387,7 +330,7 @@ export function AssetInput({
                         <div className="flex items-center gap-1.5">
                           <span className="font-bold text-xs text-slate-800 dark:text-slate-100 tracking-wide">{asset.ticker}</span>
                           <span className="text-[9px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 px-1.5 py-0.5 rounded-md uppercase shrink-0">
-                            {isCsv ? 'CSV' : asset.type}
+                            {asset.type}
                           </span>
                         </div>
                         <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate" title={asset.name}>
@@ -437,67 +380,6 @@ export function AssetInput({
               </div>
             )}
           </div>
-        )}
-      </div>
-
-      {/* Collapsible CSV File Upload Option */}
-      <div className="bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-xl transition-colors overflow-hidden">
-        <button 
-          type="button" 
-          onClick={() => setIsCsvOpen(!isCsvOpen)}
-          className="w-full p-4 flex items-center justify-between text-sm font-semibold text-slate-800 dark:text-slate-300 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
-        >
-          <div className="flex items-center gap-1.5">
-            <Upload className="w-4 h-4 text-emerald-500" /> 
-            Upload Private Historical CSV
-          </div>
-          {isCsvOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-        </button>
-        
-        {isCsvOpen && (
-          <form onSubmit={handleCsvUpload} className="p-4 pt-0 space-y-3">
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Custom Ticker</label>
-                <input
-                  type="text"
-                  value={csvTicker}
-                  onChange={(e) => setCsvTicker(e.target.value.toUpperCase())}
-                  className="w-full text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg py-1.5 px-3 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors shadow-sm"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Asset Name</label>
-                <input
-                  type="text"
-                  value={csvName}
-                  onChange={(e) => setCsvName(e.target.value)}
-                  className="w-full text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg py-1.5 px-3 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors shadow-sm"
-                  required
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">
-                CSV File (Must have "Date" and "Close" / "Adj Close" columns)
-              </label>
-              <input
-                type="file"
-                accept=".csv"
-                onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
-                className="w-full text-xs bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg py-1.5 px-2 text-slate-600 dark:text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-[10px] file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 file:cursor-pointer transition-colors shadow-sm"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold py-2 px-3 rounded-lg cursor-pointer transition-colors shadow-sm"
-            >
-              <Upload className="w-4 h-4" /> Load CSV Asset
-            </button>
-          </form>
         )}
       </div>
 

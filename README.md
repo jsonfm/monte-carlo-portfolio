@@ -37,7 +37,6 @@ A professional, fully client-side **Quantitative Portfolio Designer, Historical 
     *   **Monte Carlo Projections:** Displays a clean statistical "cone" (10th percentile downside, 50th percentile median, 90th percentile upside), overlaid with 30 randomly selected simulated asset paths.
     *   **Historical Backtester:** Models historical portfolio growth alongside a customizable benchmark index (e.g., SPY, QQQ, IWM, BTC-USD) over the historical range.
     *   **Asset Allocation:** A beautiful, responsive Pie Chart visualizing portfolio composition.
-*   **📂 Zero-Server Custom CSV Uploads:** Import arbitrary CSV pricing data on-the-fly. The client-side parser reads historical data seamlessly, allowing you to simulate custom, unlisted, or private assets.
 *   **⚡ High-Performance Web Workers:** The intensive statistical simulation loop is executed entirely in a separate background thread via HTML5 ESM Web Workers. Computes thousands of years of simulated paths with full cash flow and tax histories in milliseconds without blocking the browser UI, ensuring a consistent 60 FPS.
 *   **🌗 Adaptive Dark Mode & Tailwind v4 UI:** Beautiful, modern, dark-first UI optimized with Tailwind CSS v4, smooth Framer Motion transitions, responsive layouts, unified light/dark styling, and intuitive informational tooltips for all settings.
 
@@ -170,7 +169,7 @@ monte-carlo-portfolio/
 │   │   ├── usePortfolioState.ts     # User designer form and model states
 │   │   └── useSimulation.ts         # Worker orchestration and thread safety
 │   ├── services/
-│   │   └── dataService.ts           # Yahoo Finance CORS fetcher & CSV parser
+│   │   └── dataService.ts           # Yahoo Finance CORS fetcher & search APIs
 │   ├── types/               # TypeScript interfaces & types
 │   │   └── index.ts         # Shared TypeScript type definitions
 │   ├── utils/
@@ -226,25 +225,6 @@ Make sure you have Node.js (v18+) and npm installed on your machine.
 
 ---
 
-## 📁 Custom CSV Format Guidelines
-
-To upload your own historical price data, drag and drop or upload a `.csv` file. The local parser is robust and adapts to many structures, but for optimal results, ensure your CSV complies with the following format:
-
-*   It must have a **Header Row** (the first row containing column names).
-*   **Date Column:** One column must contain the dates. The parser identifies columns matching `date` or `time` (case-insensitive, e.g., "Date", "date", "Timestamp").
-*   **Price Column:** One column must contain the close prices. The parser identifies columns matching `adj close`, `close`, `price`, or `value` (case-insensitive, e.g., "Adj Close", "Close", "Close Price").
-*   Values in the price column can contain currency symbols (e.g., `$`) or commas (e.g., `1,250.50`), as the parser automatically strips formatting before calculations.
-
-### Example CSV Structure:
-```csv
-Date,Open,High,Low,Close,Adj Close,Volume
-2026-05-20,185.20,187.50,184.10,186.40,186.40,52000000
-2026-05-21,186.50,188.10,185.90,187.90,187.75,48000000
-2026-05-22,188.00,189.40,187.20,188.50,188.50,51000000
-```
-
----
-
 ## 🛠️ Built With
 
 *   [React 19](https://react.dev/) - Declarative UI development
@@ -252,7 +232,6 @@ Date,Open,High,Low,Close,Adj Close,Volume
 *   [Tailwind CSS v4](https://tailwindcss.com/) - Utility-first styling with advanced CSS variable engines
 *   [Recharts](https://recharts.org/) - Beautiful, interactive charting
 *   [better-react-mathjax](https://github.com/a-bentofreire/better-react-mathjax) - High-performance client-side MathJax equation rendering
-*   [PapaParse](https://www.papaparse.com/) - High-performance client-side CSV parsing
 *   [Framer Motion](https://www.framer.com/motion/) - Fluent UI transitions and micro-interactions
 *   [Lucide React](https://lucide.dev/) - Clean and consistent modern vector icons
 

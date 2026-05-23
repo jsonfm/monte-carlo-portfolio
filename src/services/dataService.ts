@@ -1,4 +1,3 @@
-import Papa from 'papaparse';
 import type { HistoricalPrice, AssetType } from '@/types';
 
 // Standard fallback assets if users don't know what to put
@@ -98,72 +97,6 @@ export async function fetchHistoricalData(
   }
 
   throw lastError || new Error(`Failed to fetch data for ${ticker}`);
-}
-
-/**
- * Parses user-uploaded CSV file into HistoricalPrice[]
- */
-export function parseCSVData(csvContent: string): HistoricalPrice[] {
-  const parsed = Papa.parse(csvContent, {
-    header: true,
-    skipEmptyLines: true,
-  });
-
-  if (parsed.errors.length > 0) {
-    console.warn('CSV parsing warnings:', parsed.errors);
-  }
-
-  const data = parsed.data as Array<Record<string, string>>;
-  if (data.length === 0) {
-    throw new Error('The CSV file is empty');
-  }
-
-  // Find column names that match "date" and "price" or "close"
-  const firstRow = data[0];
-  const keys = Object.keys(firstRow);
-  
-  const dateKey = keys.find(k => /date|time/i.test(k));
-  const priceKey = keys.find(k => /adj.*close|close|price|value/i.test(k)) || keys.find(k => /adj/i.test(k));
-
-  if (!dateKey) {
-    throw new Error('Could not find a date column in the CSV. Make sure you have a "Date" column.');
-  }
-  if (!priceKey) {
-    throw new Error('Could not find a price/close column in the CSV. Make sure you have a "Close", "Adj Close", or "Price" column.');
-  }
-
-  const historicalPrices: HistoricalPrice[] = [];
-
-  for (const row of data) {
-    const rawDate = row[dateKey]?.trim();
-    const rawPrice = row[priceKey]?.trim();
-
-    if (!rawDate || !rawPrice) continue;
-
-    // Standardize date parsing
-    const dateParsed = new Date(rawDate);
-    if (isNaN(dateParsed.getTime())) continue;
-
-    const yyyy = dateParsed.getFullYear();
-    const mm = String(dateParsed.getMonth() + 1).padStart(2, '0');
-    const dd = String(dateParsed.getDate()).padStart(2, '0');
-    const dateStr = `${yyyy}-${mm}-${dd}`;
-
-    const priceNum = parseFloat(rawPrice.replace(/[$,]/g, ''));
-    if (isNaN(priceNum)) continue;
-
-    historicalPrices.push({
-      date: dateStr,
-      price: priceNum,
-    });
-  }
-
-  if (historicalPrices.length === 0) {
-    throw new Error('No valid rows with Date and Price could be parsed');
-  }
-
-  // Sort by date ascending
-  return historicalPrices.sort((a, b) => a.date.localeCompare(b.date));
 }
 
 /**

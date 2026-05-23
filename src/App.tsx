@@ -52,9 +52,6 @@ export default function App() {
     setUseGarch,
     useMertonJumps,
     setUseMertonJumps,
-    customCsvPrices,
-    customCsvUploaded,
-    handleUploadCSV,
     handleReset,
   } = usePortfolioState();
 
@@ -73,7 +70,6 @@ export default function App() {
     assets,
     benchmarkTicker,
     historicalRange,
-    customCsvPrices,
     initialInvestment,
     horizonYears,
     simulationsCount,
@@ -129,8 +125,6 @@ export default function App() {
             <AssetInput 
               assets={assets} 
               onChange={setAssets} 
-              onUploadCSV={handleUploadCSV}
-              customCsvUploaded={customCsvUploaded}
             />
           </div>
 

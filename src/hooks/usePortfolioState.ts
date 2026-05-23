@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Asset, HistoricalPrice, HistoricalRange } from '@/types';
+import type { Asset, HistoricalRange } from '@/types';
 import { PRESET_ASSETS } from '@/services/dataService';
 
 export function usePortfolioState() {
@@ -56,16 +56,6 @@ export function usePortfolioState() {
   const [useGarch, setUseGarch] = useState<boolean>(false);
   const [useMertonJumps, setUseMertonJumps] = useState<boolean>(false);
 
-  // Custom uploaded CSVs: ticker -> array of { date, price }
-  const [customCsvPrices, setCustomCsvPrices] = useState<{ [ticker: string]: HistoricalPrice[] }>({});
-  const [customCsvUploaded, setCustomCsvUploaded] = useState<{ [ticker: string]: string }>({});
-
-  // Upload handler for CSV
-  const handleUploadCSV = (ticker: string, name: string, prices: HistoricalPrice[]) => {
-    setCustomCsvPrices(prev => ({ ...prev, [ticker]: prices }));
-    setCustomCsvUploaded(prev => ({ ...prev, [ticker]: name }));
-  };
-
   const handleReset = () => {
     setAssets(PRESET_ASSETS);
     setInitialInvestment(10000);
@@ -86,8 +76,6 @@ export function usePortfolioState() {
     setBootstrapBlockSize(10);
     setUseGarch(false);
     setUseMertonJumps(false);
-    setCustomCsvPrices({});
-    setCustomCsvUploaded({});
   };
 
   return {
@@ -131,9 +119,6 @@ export function usePortfolioState() {
     setUseGarch,
     useMertonJumps,
     setUseMertonJumps,
-    customCsvPrices,
-    customCsvUploaded,
-    handleUploadCSV,
     handleReset,
   };
 }
