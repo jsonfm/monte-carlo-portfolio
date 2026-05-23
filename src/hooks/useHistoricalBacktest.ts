@@ -311,11 +311,12 @@ export function useHistoricalBacktest({
     runMonteCarlo,
   ]);
 
-  // Trigger data reload only when assets list or benchmark symbol changes
+  // Trigger data reload and backtesting with a debounced delay (350ms)
+  // to avoid overloading the CPU and spawning excessive Web Workers during rapid typing or slider dragging
   useEffect(() => {
     const timer = setTimeout(() => {
       loadDataAndBacktest();
-    }, 0);
+    }, 350);
     return () => clearTimeout(timer);
   }, [loadDataAndBacktest]);
 
