@@ -1,4 +1,4 @@
-import { AlertCircle, ShieldCheck } from 'lucide-react';
+import { AlertCircle, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { AssetInput } from '@/components/AssetInput';
 import { SimulationControls } from '@/components/SimulationControls';
@@ -60,6 +60,7 @@ export default function App() {
     historicalMetrics,
     historicalLoading,
     historicalError,
+    dataWarning,
     simLoading,
     simError,
     simResult,
@@ -128,6 +129,16 @@ export default function App() {
               onChange={setAssets} 
             />
           </div>
+
+          {dataWarning && (
+            <div className="p-4 bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900/40 text-orange-800 dark:text-orange-300 rounded-2xl flex items-start gap-3 text-xs leading-relaxed shadow-lg transition-colors">
+              <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5 text-orange-500 dark:text-orange-400" />
+              <div>
+                <p className="font-bold text-orange-900 dark:text-orange-200">Data Range Adjusted</p>
+                <p className="text-[11px] text-orange-700/90 dark:text-orange-300/80 mt-1">{dataWarning}</p>
+              </div>
+            </div>
+          )}
 
           <div className="bg-white dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800/80 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl space-y-5 sm:space-y-6 shadow-sm dark:shadow-xl transition-colors">
             <SimulationControls 
@@ -208,7 +219,7 @@ export default function App() {
             <div className="bg-slate-100/50 dark:bg-slate-950/40 p-8 border border-slate-200 dark:border-slate-800/40 rounded-3xl flex flex-col items-center justify-center text-center space-y-3 h-96 transition-colors">
               <span className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />
               <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Syncing Market Histories...</p>
-              <p className="text-[11px] text-slate-500 max-w-xs">Connecting to decentralized APIs to fetch adjusted closes for {assets.map(a => a.ticker).join(', ')}.</p>
+              <p className="text-[11px] text-slate-500 max-w-xs">Connecting to Yahoo Finance APIs to fetch adjusted closes for {assets.map(a => a.ticker).join(', ')}.</p>
             </div>
           )}
 

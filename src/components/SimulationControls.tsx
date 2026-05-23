@@ -639,6 +639,18 @@ export function SimulationControls({
           <span>Please ensure you have added at least one asset and that your allocation weights sum to exactly 100% to run.</span>
         </p>
       )}
+
+      <div className="text-center pt-3 border-t border-slate-200 dark:border-slate-800/40 flex items-center justify-center gap-1 text-[10px] text-slate-400 dark:text-slate-500 font-medium transition-colors">
+        <span>Market data powered by</span>
+        <a
+          href="https://finance.yahoo.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 hover:underline transition-colors font-semibold"
+        >
+          Yahoo Finance
+        </a>
+      </div>
     </div>
   );
 }

@@ -50,47 +50,49 @@ export function useHistoricalBacktest({
   const [historicalMetrics, setHistoricalMetrics] = useState<HistoricalMetrics | null>(null);
   const [historicalLoading, setHistoricalLoading] = useState<boolean>(false);
   const [historicalError, setHistoricalError] = useState<string | null>(null);
+  const [dataWarning, setDataWarning] = useState<string | null>(null);
 
   // Simulation custom hook
-  const { 
-    loading: simLoading, 
-    error: simError, 
-    result: simResult, 
-    runMonteCarlo, 
-    cancelSimulation 
+  const {
+    loading: simLoading,
+    error: simError,
+    result: simResult,
+    runMonteCarlo,
+    cancelSimulation,
   } = useSimulation();
 
   // Validations
   const totalWeight = useMemo(() => assets.reduce((sum, a) => sum + a.weight, 0), [assets]);
   const isAllocationValid = totalWeight === 100 && assets.length > 0;
 
-  // Track the raw asset histories cache so we don't have to re-fetch if we just change weights/simulation params
+  // Track raw asset histories so we don't have to re-fetch when only weights / sim params change
   const assetsHistoriesCacheRef = useRef<{ [ticker: string]: HistoricalPrice[] }>({});
   const benchmarkHistoryCacheRef = useRef<{ ticker: string; prices: HistoricalPrice[] } | null>(null);
+
+  // Cache the per-asset MC inputs from the most recent successful backtest. Quick reruns
+  // (weight tweaks, sim-parameter changes) replay these directly to avoid re-deriving
+  // returns from cached raw prices, which has bitten us with forward-fill bugs in the past.
+  const lastWorkerInputsRef = useRef<{
+    tickersKey: string;
+    assetsHistoryForWorker: AssetHistory[];
+  } | null>(null);
 
   // Main task to load all price data and backtest
   const loadDataAndBacktest = useCallback(async (forceFetch = false) => {
     if (assets.length === 0) {
-      setTimeout(() => {
-        setHistoricalMetrics(null);
-      }, 0);
+      setHistoricalMetrics(null);
       return;
     }
 
-    // Check if we actually need to show a loading screen (network fetch)
-    const updatedCache = { ...assetsHistoriesCacheRef.current };
+    // Decide whether the user needs to see a loading screen for a network fetch
     let needsNetworkFetch = forceFetch;
-
-    // Check benchmark cache
     const cachedBench = benchmarkHistoryCacheRef.current;
     if (!cachedBench || cachedBench.ticker !== benchmarkTicker) {
       needsNetworkFetch = true;
     }
-
-    // Check assets cache
     if (!needsNetworkFetch) {
       for (const asset of assets) {
-        if (!updatedCache[asset.ticker]) {
+        if (!assetsHistoriesCacheRef.current[asset.ticker]) {
           needsNetworkFetch = true;
           break;
         }
@@ -98,40 +100,28 @@ export function useHistoricalBacktest({
     }
 
     if (needsNetworkFetch) {
-      setTimeout(() => {
-        setHistoricalLoading(true);
-        setHistoricalError(null);
-      }, 0);
-    } else {
-      setTimeout(() => {
-        setHistoricalError(null);
-      }, 0);
+      setHistoricalLoading(true);
     }
+    setHistoricalError(null);
+    setDataWarning(null);
 
     try {
-      const historiesToAlign: { ticker: string; prices: HistoricalPrice[] }[] = [];
-
-      // 1. Fetch/Resolve histories for all current assets
+      // 1. Fetch / resolve histories for every asset
       const updatedCache = { ...assetsHistoriesCacheRef.current };
+      const historiesToAlign: { ticker: string; prices: HistoricalPrice[] }[] = [];
 
       for (const asset of assets) {
         let prices = updatedCache[asset.ticker];
-
-        // If not in cache (or forceFetch), fetch it!
         if (!prices || forceFetch) {
-          // Fetch from Yahoo Finance
           prices = await fetchHistoricalData(asset.ticker, '10y');
           updatedCache[asset.ticker] = prices;
         }
-
         historiesToAlign.push({ ticker: asset.ticker, prices });
       }
-
       assetsHistoriesCacheRef.current = updatedCache;
 
-      // 2. Fetch/Resolve benchmark history
+      // 2. Fetch / resolve benchmark history
       let benchmarkPrices: HistoricalPrice[] = [];
-      const cachedBench = benchmarkHistoryCacheRef.current;
       if (cachedBench && cachedBench.ticker === benchmarkTicker && !forceFetch) {
         benchmarkPrices = cachedBench.prices;
       } else {
@@ -139,52 +129,49 @@ export function useHistoricalBacktest({
         benchmarkHistoryCacheRef.current = { ticker: benchmarkTicker, prices: benchmarkPrices };
       }
 
-      // 3. Align portfolio assets historical data
+      // 3. Align portfolio assets historical data (weekday union, forward-filled per asset)
       const { dates, alignedPrices } = alignHistoricalData(historiesToAlign);
       if (dates.length < 30) {
         throw new Error('Not enough overlapping trading days to align historical data. Please verify your assets traded concurrently.');
       }
 
-      // 4. Align the benchmark to the same historical date range
-      // Map benchmark prices by date for fast lookup
+      // 4. Align the benchmark to the same date axis.
+      // Skip dates before the benchmark's own inception so the benchmark series isn't
+      // back-filled with its first price (which would distort CAGR / vol / alpha / beta).
+      // We forward-fill missing benchmark days within the benchmark's coverage window.
       const benchMap = new Map<string, number>();
       benchmarkPrices.forEach(p => benchMap.set(p.date, p.price));
 
       const finalDates: string[] = [];
-      const finalAlignedPrices: { [ticker: string]: number }[] = [];
+      const finalAlignedPrices: { [ticker: string]: number | null }[] = [];
       const finalBenchmarkPrices: number[] = [];
 
-      let lastKnownBenchPrice = benchmarkPrices[0]?.price;
-
+      let lastKnownBenchPrice: number | undefined = undefined;
       for (let i = 0; i < dates.length; i++) {
         const date = dates[i];
-        let bPrice = benchMap.get(date);
-
-        if (bPrice !== undefined) {
-          lastKnownBenchPrice = bPrice;
-        } else {
-          bPrice = lastKnownBenchPrice;
+        const direct = benchMap.get(date);
+        if (direct !== undefined) {
+          lastKnownBenchPrice = direct;
         }
-
-        // Only include if we have a benchmark price
-        if (bPrice !== undefined) {
-          finalDates.push(date);
-          finalAlignedPrices.push(alignedPrices[i]);
-          finalBenchmarkPrices.push(bPrice);
+        if (lastKnownBenchPrice === undefined) {
+          // Pre-benchmark-inception: drop the row entirely instead of seeding with a stale price
+          continue;
         }
+        finalDates.push(date);
+        finalAlignedPrices.push(alignedPrices[i]);
+        finalBenchmarkPrices.push(lastKnownBenchPrice);
       }
 
-      // 5. Slice client-side based on historicalRange
+      if (finalDates.length < 30) {
+        throw new Error('Not enough overlapping trading days between portfolio assets and benchmark.');
+      }
+
+      // 5. Slice client-side based on the requested historicalRange
       let slicedDates = finalDates;
       let slicedAlignedPrices = finalAlignedPrices;
       let slicedBenchmarkPrices = finalBenchmarkPrices;
 
-      const rangeYearsMap: { [key: string]: number } = {
-        '1y': 1,
-        '3y': 3,
-        '5y': 5,
-        '10y': 10,
-      };
+      const rangeYearsMap: { [key: string]: number } = { '1y': 1, '3y': 3, '5y': 5, '10y': 10 };
       const yearsLimit = rangeYearsMap[historicalRange] || 5;
 
       if (finalDates.length > 0 && historicalRange !== '10y') {
@@ -201,11 +188,54 @@ export function useHistoricalBacktest({
         }
       }
 
+      // Find the first index where ALL assets have a real (post-inception) price.
+      // The historical chart still spans the full slice (with dynamic weighting before this
+      // index), but the Monte Carlo simulation runs only on the overlap window.
+      let firstValidIndex = 0;
+      for (let i = 0; i < slicedAlignedPrices.length; i++) {
+        const row = slicedAlignedPrices[i];
+        const allNonNull = assets.every(asset => row[asset.ticker] !== null);
+        if (allNonNull) {
+          firstValidIndex = i;
+          break;
+        }
+      }
+
+      const mcDates = slicedDates.slice(firstValidIndex);
+      const mcAlignedPrices = slicedAlignedPrices.slice(firstValidIndex);
+
+      // Surface a "Dynamic Weighting" notice when at least one asset's inception falls
+      // inside the requested window
+      let warning: string | null = null;
+      if (firstValidIndex > 0 && slicedDates.length > 0) {
+        const mcStartDate = new Date(mcDates[0]);
+        const mcEndDate = new Date(mcDates[mcDates.length - 1]);
+        const actualOverlapYears = ((mcEndDate.getTime() - mcStartDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1);
+
+        const missingAssetsDetails: string[] = [];
+        assets.forEach(asset => {
+          let firstNonNullIdx = -1;
+          for (let i = 0; i < slicedAlignedPrices.length; i++) {
+            if (slicedAlignedPrices[i][asset.ticker] !== null) {
+              firstNonNullIdx = i;
+              break;
+            }
+          }
+          if (firstNonNullIdx > 0) {
+            const startDateStr = slicedDates[firstNonNullIdx];
+            const startDate = new Date(startDateStr);
+            const formattedDate = startDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+            missingAssetsDetails.push(`${asset.ticker} (inception ${formattedDate})`);
+          }
+        });
+
+        const assetsListStr = missingAssetsDetails.join(', ');
+        warning = `Some assets have shorter histories than the requested range: ${assetsListStr}. The historical backtest dynamically redistributes their weight to available assets prior to their inception. The Monte Carlo simulation uses the overlapping ${actualOverlapYears} years of data.`;
+      }
+
       // 6. Compile historical portfolio vs benchmark metrics
       const weightsMap: { [ticker: string]: number } = {};
-      assets.forEach(a => {
-        weightsMap[a.ticker] = a.weight;
-      });
+      assets.forEach(a => { weightsMap[a.ticker] = a.weight; });
 
       const metrics = compileHistoricalMetrics(
         slicedDates,
@@ -216,37 +246,16 @@ export function useHistoricalBacktest({
 
       setHistoricalMetrics(metrics);
       setHistoricalLoading(false);
+      setDataWarning(warning);
 
-      // 7. Trigger Monte Carlo simulation using the newly aligned returns
-      if (isAllocationValid) {
-        // Compile AssetHistory structures for the worker
-        const assetsHistoriesForWorker: AssetHistory[] = assets.map(asset => {
-          // Filter to match aligned dates exactly
-          const alignedAssetPrices = slicedDates.map((_, idx) => slicedAlignedPrices[idx][asset.ticker]);
-          
-          // Re-calculate daily returns for these aligned prices
-          const returns: number[] = [];
-          for (let t = 1; t < alignedAssetPrices.length; t++) {
-            returns.push((alignedAssetPrices[t] - alignedAssetPrices[t-1]) / alignedAssetPrices[t-1]);
-          }
+      // 7. Trigger Monte Carlo simulation on the overlap window
+      if (isAllocationValid && mcDates.length >= 30) {
+        const assetsHistoriesForWorker = buildAssetHistories(assets, mcDates, mcAlignedPrices);
 
-          // Compute annualized metrics based on aligned data
-          const years = slicedDates.length / 252;
-          const cagr = Math.pow(alignedAssetPrices[alignedAssetPrices.length - 1] / alignedAssetPrices[0], 1 / years) - 1;
-          
-          // Volatility
-          const meanRet = returns.reduce((a, b) => a + b, 0) / returns.length;
-          const variance = returns.reduce((sum, r) => sum + Math.pow(r - meanRet, 2), 0) / (returns.length - 1);
-          const volatility = Math.sqrt(variance) * Math.sqrt(252);
-
-          return {
-            ticker: asset.ticker,
-            prices: slicedDates.map((d, idx) => ({ date: d, price: slicedAlignedPrices[idx][asset.ticker] })),
-            returns,
-            cagr: isNaN(cagr) ? 0 : cagr,
-            volatility: isNaN(volatility) ? 0 : volatility,
-          };
-        });
+        lastWorkerInputsRef.current = {
+          tickersKey: tickersKey(assets),
+          assetsHistoryForWorker: assetsHistoriesForWorker,
+        };
 
         runMonteCarlo({
           assets,
@@ -307,47 +316,21 @@ export function useHistoricalBacktest({
     return () => clearTimeout(timer);
   }, [loadDataAndBacktest]);
 
-  // Trigger quick simulation rerun without fetching if only weights or simulation settings change
+  // Quick rerun: replay MC with the cached per-asset histories from the last full backtest.
+  // The cached histories don't depend on weights or sim parameters — only the asset list and
+  // the data window — so we can re-trigger the worker for free as long as the ticker set matches.
   const handleQuickRunSimulation = useCallback(() => {
     if (!isAllocationValid || !historicalMetrics) return;
 
-    // Use cached histories to run simulation instantly
-    const finalDates = historicalMetrics.dates;
-    
-    const assetsHistoriesForWorker: AssetHistory[] = assets.map(asset => {
-      const rawPrices = assetsHistoriesCacheRef.current[asset.ticker] || [];
-      
-      // Pull actual aligned prices from our historicalMetrics
-      // We can map from historicalMetrics to make it 100% correct
-      const pricesMap = historicalMetrics.dates.map(d => {
-        return { date: d, price: rawPrices.find(p => p.date === d)?.price || rawPrices[0]?.price || 0 };
-      });
-
-      const alignedPrices = pricesMap.map(p => p.price);
-      const returns: number[] = [];
-      for (let t = 1; t < alignedPrices.length; t++) {
-        returns.push((alignedPrices[t] - alignedPrices[t-1]) / alignedPrices[t-1]);
-      }
-
-      const years = finalDates.length / 252;
-      const cagr = Math.pow(alignedPrices[alignedPrices.length - 1] / alignedPrices[0], 1 / years) - 1;
-      
-      const meanRet = returns.reduce((a, b) => a + b, 0) / returns.length;
-      const variance = returns.reduce((sum, r) => sum + Math.pow(r - meanRet, 2), 0) / (returns.length - 1);
-      const volatility = Math.sqrt(variance) * Math.sqrt(252);
-
-      return {
-        ticker: asset.ticker,
-        prices: pricesMap,
-        returns,
-        cagr: isNaN(cagr) ? 0 : cagr,
-        volatility: isNaN(volatility) ? 0 : volatility,
-      };
-    });
+    const cached = lastWorkerInputsRef.current;
+    if (!cached || cached.tickersKey !== tickersKey(assets)) {
+      // Cache is stale (ticker set changed). The debounced effect will run a full backtest.
+      return;
+    }
 
     runMonteCarlo({
       assets,
-      assetsHistory: assetsHistoriesForWorker,
+      assetsHistory: cached.assetsHistoryForWorker,
       initialInvestment,
       horizonYears,
       simulationsCount,
@@ -392,14 +375,17 @@ export function useHistoricalBacktest({
     cancelSimulation();
     setHistoricalMetrics(null);
     setHistoricalError(null);
+    setDataWarning(null);
     assetsHistoriesCacheRef.current = {};
     benchmarkHistoryCacheRef.current = null;
+    lastWorkerInputsRef.current = null;
   }, [cancelSimulation]);
 
   return {
     historicalMetrics,
     historicalLoading,
     historicalError,
+    dataWarning,
     simLoading,
     simError,
     simResult,
@@ -408,4 +394,52 @@ export function useHistoricalBacktest({
     handleQuickRunSimulation,
     handleResetCaches,
   };
+}
+
+// --- helpers ---
+
+const TRADING_DAYS_PER_YEAR = 252;
+
+function tickersKey(assets: Asset[]): string {
+  return assets.map(a => a.ticker).sort().join('|');
+}
+
+/**
+ * Build per-asset MC inputs (returns, annualized CAGR, annualized volatility) from an
+ * already aligned and overlap-windowed price grid. Inputs are guaranteed non-null because
+ * the caller slices to the first index where every asset has post-inception data.
+ */
+function buildAssetHistories(
+  assets: Asset[],
+  mcDates: string[],
+  mcAlignedPrices: { [ticker: string]: number | null }[]
+): AssetHistory[] {
+  return assets.map(asset => {
+    const alignedAssetPrices = mcAlignedPrices.map(row => row[asset.ticker] as number);
+
+    const returns: number[] = [];
+    for (let t = 1; t < alignedAssetPrices.length; t++) {
+      returns.push((alignedAssetPrices[t] - alignedAssetPrices[t - 1]) / alignedAssetPrices[t - 1]);
+    }
+
+    const years = mcDates.length / TRADING_DAYS_PER_YEAR;
+    const cagrRaw = years > 0
+      ? Math.pow(alignedAssetPrices[alignedAssetPrices.length - 1] / alignedAssetPrices[0], 1 / years) - 1
+      : 0;
+
+    let volatilityRaw = 0;
+    if (returns.length > 1) {
+      const meanRet = returns.reduce((a, b) => a + b, 0) / returns.length;
+      const variance = returns.reduce((sum, r) => sum + Math.pow(r - meanRet, 2), 0) / (returns.length - 1);
+      volatilityRaw = Math.sqrt(variance) * Math.sqrt(TRADING_DAYS_PER_YEAR);
+    }
+
+    return {
+      ticker: asset.ticker,
+      prices: mcDates.map((d, idx) => ({ date: d, price: alignedAssetPrices[idx] })),
+      returns,
+      cagr: isNaN(cagrRaw) ? 0 : cagrRaw,
+      volatility: isNaN(volatilityRaw) ? 0 : volatilityRaw,
+    };
+  });
 }

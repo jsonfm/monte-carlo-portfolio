@@ -11,14 +11,15 @@ export function calculateCAGR(startValue: number, endValue: number, years: numbe
 /**
  * Calculates daily returns for a price series
  */
-export function calculateDailyReturns(prices: number[]): number[] {
-  const returns: number[] = [];
+export function calculateDailyReturns(prices: (number | null)[]): (number | null)[] {
+  const returns: (number | null)[] = [];
   for (let i = 1; i < prices.length; i++) {
+    const curr = prices[i];
     const prev = prices[i - 1];
-    if (prev === 0) {
-      returns.push(0);
+    if (curr === null || prev === null || prev === 0) {
+      returns.push(null);
     } else {
-      returns.push((prices[i] - prev) / prev);
+      returns.push((curr - prev) / prev);
     }
   }
   return returns;
@@ -274,7 +275,7 @@ export function calculateSingleAssetMetrics(
  */
 export function compileHistoricalMetrics(
   dates: string[],
-  alignedPrices: { [ticker: string]: number }[],
+  alignedPrices: { [ticker: string]: number | null }[],
   weights: { [ticker: string]: number },
   benchmarkPrices: number[],
   riskFreeRate: number = 0.04
@@ -284,16 +285,6 @@ export function compileHistoricalMetrics(
   // 1. Calculate historical portfolio values (starting with $10,000)
   const portfolioValues: number[] = [];
   const startCapital = 10000;
-  
-  // Calculate initial asset quantities based on target weights
-  const assetQuantities: { [ticker: string]: number } = {};
-  const firstPrices = alignedPrices[0];
-  
-  Object.keys(weights).forEach(ticker => {
-    const weightFraction = weights[ticker] / 100;
-    const allocatedValue = startCapital * weightFraction;
-    assetQuantities[ticker] = allocatedValue / firstPrices[ticker];
-  });
 
   // Rebalancing: let's track holding weights daily. For pure historical, we assume "buy and hold" or "daily rebalanced".
   // A standard way to do "historical portfolio" is "rebalanced to target weights daily" (for simplicity/purity) or "buy and hold".
@@ -302,7 +293,7 @@ export function compileHistoricalMetrics(
   // Let's do daily rebalanced for smooth returns: portfolio daily return = sum(asset daily return * weight).
   // Then construct portfolio values from daily returns. This is mathematically cleanest.
   const tickers = Object.keys(weights);
-  const dailyReturnsByAsset: { [ticker: string]: number[] } = {};
+  const dailyReturnsByAsset: { [ticker: string]: (number | null)[] } = {};
   
   tickers.forEach(ticker => {
     const assetPrices = alignedPrices.map(row => row[ticker]);
@@ -312,19 +303,38 @@ export function compileHistoricalMetrics(
   const portfolioReturns: number[] = [];
   portfolioValues.push(startCapital);
 
+  // Daily portfolio return with dynamic weighting:
+  // For each day, sum the weights of assets that have a valid return (i.e. are post-inception).
+  // Renormalize those weights so they sum to 1.0 and compute the weighted daily return.
+  // Effect: assets with shorter histories effectively hold 0% pre-inception, and the
+  // remaining assets' weights are scaled up proportionally to fill the gap.
   for (let t = 0; t < numDays - 1; t++) {
     let dayReturn = 0;
+    let activeWeightSum = 0;
+
     tickers.forEach(ticker => {
-      const assetWeight = weights[ticker] / 100;
       const assetReturn = dailyReturnsByAsset[ticker][t];
-      dayReturn += assetReturn * assetWeight;
+      if (assetReturn !== null) {
+        activeWeightSum += weights[ticker];
+      }
     });
+
+    if (activeWeightSum > 0) {
+      tickers.forEach(ticker => {
+        const assetReturn = dailyReturnsByAsset[ticker][t];
+        if (assetReturn !== null) {
+          const adjustedWeight = weights[ticker] / activeWeightSum;
+          dayReturn += assetReturn * adjustedWeight;
+        }
+      });
+    }
+
     portfolioReturns.push(dayReturn);
     portfolioValues.push(portfolioValues[portfolioValues.length - 1] * (1 + dayReturn));
   }
 
   // 2. Benchmark daily returns & values
-  const benchmarkReturns = calculateDailyReturns(benchmarkPrices);
+  const benchmarkReturns = calculateDailyReturns(benchmarkPrices) as number[];
   const benchmarkNormalizedValues: number[] = [];
   const benchStartPrice = benchmarkPrices[0];
   benchmarkPrices.forEach(p => {

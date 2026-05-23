@@ -100,17 +100,30 @@ export async function fetchHistoricalData(
 }
 
 /**
- * Merges historical price time series from multiple assets, matching dates
+ * Merges historical price time series from multiple assets, matching dates.
+ *
+ * The union of dates is restricted to weekdays so that mixed-frequency portfolios
+ * (e.g. 24/7 crypto alongside Mon–Fri equities) annualize cleanly with 252
+ * trading days/year downstream. For weekend-trading assets like BTC-USD this
+ * means a Monday return is computed close-to-close vs. the prior Friday, which
+ * is the standard convention when blending crypto into a portfolio.
  */
 export function alignHistoricalData(
   assetsData: { ticker: string; prices: HistoricalPrice[] }[]
-): { dates: string[]; alignedPrices: { [ticker: string]: number }[] } {
+): { dates: string[]; alignedPrices: { [ticker: string]: number | null }[] } {
   if (assetsData.length === 0) return { dates: [], alignedPrices: [] };
 
-  // Find all unique dates across all assets
+  const isWeekday = (dateStr: string): boolean => {
+    const day = new Date(`${dateStr}T00:00:00Z`).getUTCDay();
+    return day !== 0 && day !== 6;
+  };
+
+  // Union of all unique weekdays across all assets
   const dateSet = new Set<string>();
   assetsData.forEach(asset => {
-    asset.prices.forEach(p => dateSet.add(p.date));
+    asset.prices.forEach(p => {
+      if (isWeekday(p.date)) dateSet.add(p.date);
+    });
   });
 
   const sortedDates = Array.from(dateSet).sort();
@@ -125,16 +138,15 @@ export function alignHistoricalData(
   });
 
   // Aligned prices array
-  const alignedPrices: { [ticker: string]: number }[] = [];
-  const datesWithFullData: string[] = [];
+  const alignedPrices: { [ticker: string]: number | null }[] = [];
+  const finalDates: string[] = [];
 
   // For each date, ensure we can either find the price or backfill/forward-fill it.
   // In portfolio analytics, if a price is missing on a date, we forward-fill from the last available price.
   const lastKnownPrice: { [ticker: string]: number } = {};
 
   sortedDates.forEach(date => {
-    let hasAllDataThisDate = true;
-    const rowPrices: { [ticker: string]: number } = {};
+    const rowPrices: { [ticker: string]: number | null } = {};
 
     assetsData.forEach(asset => {
       const price = priceMapByAsset[asset.ticker][date];
@@ -146,19 +158,16 @@ export function alignHistoricalData(
         rowPrices[asset.ticker] = lastKnownPrice[asset.ticker];
       } else {
         // No price has been recorded yet for this asset (can happen if asset started trading later)
-        hasAllDataThisDate = false;
+        rowPrices[asset.ticker] = null;
       }
     });
 
-    // Only include rows where we have prices for ALL assets
-    if (hasAllDataThisDate) {
-      datesWithFullData.push(date);
-      alignedPrices.push(rowPrices);
-    }
+    finalDates.push(date);
+    alignedPrices.push(rowPrices);
   });
 
   return {
-    dates: datesWithFullData,
+    dates: finalDates,
     alignedPrices: alignedPrices,
   };
 }
