@@ -15,11 +15,19 @@ A professional, fully client-side **Quantitative Portfolio Designer, Historical 
 ## 🌟 Key Features
 
 *   **🛠️ Interactive Portfolio Designer:** Custom-design portfolios by adding assets with arbitrary tickers/names, custom categories (ETF, Stock, Bond, Crypto), and dynamic weight distributions. Includes interactive weight visualizers, total allocation validation (must sum to exactly 100%), and preloaded template presets.
+*   **📶 Real-time Market Data & Backtesting:** Integrates with **Yahoo Finance** using robust, multi-fallback, client-side CORS proxies (`corsproxy.io` and `allorigins`) to fetch real-time and historical daily asset prices across custom timeframes with zero server-side storage required, keeping all data 100% private.
 *   **🎲 Advanced Stochastic Simulation Engines:**
     *   **Geometric Brownian Motion (GBM) with Correlation:** Annualizes daily asset drifts ($\mu$) and volatilities ($\sigma$), correlating returns across assets via **Cholesky Decomposition** of the historical covariance matrix.
     *   **GARCH(1,1) Volatility Clustering:** Extends standard GBM by modeling time-varying conditional variance. Captures realistic market "calm" and "panic" phases where large shocks lead to sustained high-volatility regimes.
     *   **Merton Jump-Diffusion (Black Swans):** Incorporates Poisson-distributed, randomized systemic shocks ("jumps") representing sudden crash events or flash crashes. Includes asset-class specific jump reactions (e.g., severe stock/crypto crashes paired with flight-to-safety bond gains) and a mathematical compensator to prevent drift bias.
     *   **Moving Block Bootstrap:** A non-parametric engine that samples contiguous historical daily return **blocks** (e.g., 10-day blocks). This preserves joint-asset covariance while naturally capturing momentum, short-term trends, and serial autocorrelation directly from market history.
+*   **📋 Pro-Grade Executive Report & Analytics:** Synthesizes simulation results into an extensive, highly visual, multi-dimension analytical report:
+    *   **Executive Summary:** Consolidates simulation constraints, cash flow parameters, and core health scores.
+    *   **Portfolio Composition & Diversification Audit:** Calculates the Herfindahl-Hirschman Index (HHI) to classify and grade overall portfolio diversification (from Grade A Excellent to Grade F Extreme Concentration).
+    *   **Downside Protection & Tail Risk Assessment:** Provides deep insight into Value at Risk (VaR), Conditional Value at Risk (CVaR / Expected Shortfall), capital loss probabilities, and transaction/tax friction drag.
+    *   **Custom Goal Probability Solver:** Input any custom dollar target and the engine reverse-solves the exact probability of achievement, suggesting starting capital and tracking the target crossing year.
+    *   **Strategic Portfolio Analysis & Considerations:** Dynamic, rules-based portfolio advisor suggesting recommendations for asset concentration, inflation risk, safe withdrawal rates, and Merton jump impacts.
+    *   **Export & Share Utility:** One-click copy for clean markdown/text memo reporting, single-button `.txt` file downloading, and print-optimized CSS overrides to save the complete report as a publication-ready PDF.
 *   **💰 Comprehensive Wealth Accumulation & Cash Flow Controls:**
     *   **Monthly Deposits & Withdrawals:** Model realistic, long-term accumulation plans (savings) or decumulation paths (retirement income distributions) processed on a monthly cycle.
     *   **Inflation-Adjusted Projections:** Toggle inflation discounting to view all future value percentiles in inflation-adjusted, real-purchasing-power dollars.
@@ -37,6 +45,7 @@ A professional, fully client-side **Quantitative Portfolio Designer, Historical 
     *   **Monte Carlo Projections:** Displays a clean statistical "cone" (10th percentile downside, 50th percentile median, 90th percentile upside), overlaid with 30 randomly selected simulated asset paths.
     *   **Historical Backtester:** Models historical portfolio growth alongside a customizable benchmark index (e.g., SPY, QQQ, IWM, BTC-USD) over the historical range.
     *   **Asset Allocation:** A beautiful, responsive Pie Chart visualizing portfolio composition.
+*   **🔍 Optimized Search Engine Visibility (SEO):** Fully indexed and optimized with custom Open Graph & Twitter Cards metadata, search engine structured data JSON-LD schemas, automated XML sitemaps, crawler instructions (`robots.txt`), and rich accessibility fallbacks for non-JavaScript search crawlers.
 *   **⚡ High-Performance Web Workers:** The intensive statistical simulation loop is executed entirely in a separate background thread via HTML5 ESM Web Workers. Computes thousands of years of simulated paths with full cash flow and tax histories in milliseconds without blocking the browser UI, ensuring a consistent 60 FPS.
 *   **🌗 Adaptive Dark Mode & Tailwind v4 UI:** Beautiful, modern, dark-first UI optimized with Tailwind CSS v4, smooth Framer Motion transitions, responsive layouts, unified light/dark styling, and intuitive informational tooltips for all settings.
 
@@ -151,6 +160,18 @@ monte-carlo-portfolio/
 ├── src/
 │   ├── assets/              # Static media and SVG assets (Vite/React icons)
 │   ├── components/          # React Presentation & Chart Components
+│   │   ├── report/          # Modular simulation executive report subcomponents
+│   │   │   ├── BenchmarkComparison.tsx      # Historical asset backtester vs. customizable benchmark
+│   │   │   ├── CompositionAnalysis.tsx      # Portfolio diversification audit & HHI index calculations
+│   │   │   ├── DistributionHistogram.tsx     # Final wealth terminal value density distribution histogram
+│   │   │   ├── ExecutiveSummary.tsx         # Quick view of simulation parameters & health scorecard
+│   │   │   ├── ExportBar.tsx                # Copy text memo & file download (.txt) helper
+│   │   │   ├── GoalSolver.tsx               # Interactive forward target-wealth probability solver
+│   │   │   ├── MethodologySettings.tsx      # Transparent math modeling and configuration values
+│   │   │   ├── PerformanceProjection.tsx    # Statistical trajectory bands and outcome percentiles
+│   │   │   ├── RiskAssessment.tsx           # Downside metrics & tail-risk calculations (95% VaR & CVaR)
+│   │   │   ├── SimulationReportSkeleton.tsx # Shimmering skeleton loading placeholder
+│   │   │   └── StrategicRecommendations.tsx # Custom, rule-based portfolio optimizations & alerts
 │   │   ├── AllocationPieChart.tsx   # Allocation weight layout
 │   │   ├── AssetInput.tsx           # Portfolio custom setup panel
 │   │   ├── DashboardCharts.tsx      # Charts parent wrapper
@@ -161,7 +182,7 @@ monte-carlo-portfolio/
 │   │   ├── MonteCarloChart.tsx      # Percentile cone and sample paths
 │   │   ├── Navbar.tsx               # Header and Dark Mode controls
 │   │   ├── SimulationControls.tsx   # Sliders (years, runs, deposits, inflation, taxes)
-│   │   └── SimulationReport.tsx     # Comprehensive, exportable analytical report
+│   │   └── SimulationReport.tsx     # Comprehensive, exportable analytical report parent
 │   ├── data/
 │   │   └── commonAssets.json        # Built-in fallback template metadata
 │   ├── hooks/               # Custom React state and side-effect hooks
