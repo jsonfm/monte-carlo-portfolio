@@ -25,7 +25,7 @@ export function MetricsDisplay({
     return `${(val * 100).toFixed(2)}%`;
   };
 
-  const formatProbability = (prob: number, decimals = 1, allowZero = true) => {
+  const formatProbability = (prob: number, decimals = 1, allowZero = false) => {
     if (prob >= 0.999) return '> 99.9%';
     if (prob >= 0.99) return '> 99%';
     if (prob <= 0.001 && prob > 0) return '< 0.1%';

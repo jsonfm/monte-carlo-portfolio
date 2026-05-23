@@ -7,6 +7,7 @@ import { MetricsDisplay } from '@/components/MetricsDisplay';
 import { DashboardCharts } from '@/components/DashboardCharts';
 import { SimulationReport } from '@/components/SimulationReport';
 import { MethodologyDocs } from '@/components/MethodologyDocs';
+import { Glossary } from '@/components/Glossary';
 import { usePortfolioState } from '@/hooks/usePortfolioState';
 import { useHistoricalBacktest } from '@/hooks/useHistoricalBacktest';
 
@@ -255,6 +256,7 @@ export default function App() {
                 {/* Simulation Report Summary */}
                 <SimulationReport 
                   simulationData={simResult}
+                  historicalData={historicalMetrics}
                   assets={assets}
                   model={model}
                   rebalanceFrequency={rebalanceFrequency}
@@ -275,6 +277,9 @@ export default function App() {
 
                 {/* Methodology Explanations card */}
                 <MethodologyDocs />
+
+                {/* Terminology Glossary card */}
+                <Glossary />
               </div>
             </div>
           )}
