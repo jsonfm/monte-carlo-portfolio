@@ -82,7 +82,7 @@ export default function HistoricalChart({ historicalData, benchmarkTicker }: His
         </div>
       </div>
 
-      <div className="w-full h-80">
+      <div className="w-full h-64 sm:h-80">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
             <defs>

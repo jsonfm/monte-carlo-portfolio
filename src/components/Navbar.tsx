@@ -25,19 +25,19 @@ export function Navbar() {
   }, [isDark]);
 
   return (
-    <header className="border-b border-slate-200 dark:border-slate-800/80 bg-white/65 dark:bg-slate-950/65 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between transition-colors">
-      <div className="flex items-center gap-2.5">
-        <div className="p-2 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md">
+    <header className="border-b border-slate-200 dark:border-slate-800/80 bg-white/65 dark:bg-slate-950/65 backdrop-blur-md sticky top-0 z-50 px-3.5 sm:px-6 py-3 sm:py-4 flex items-center justify-between transition-colors">
+      <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+        <div className="p-2 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shrink-0">
           <TrendingUp className="w-5 h-5" />
         </div>
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-1.5">
             <h1 className="text-sm font-black text-slate-800 dark:text-slate-100 tracking-tight leading-none m-0 p-0">MONTE CARLO</h1>
-            <span className="text-[10px] font-bold uppercase tracking-widest bg-blue-100 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] font-bold uppercase tracking-widest bg-blue-100 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 px-1.5 py-0.5 rounded shrink-0">
               PRO
             </span>
           </div>
-          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Serverless Portfolio Analytics & Risk Estimator</p>
+          <p className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 font-medium truncate hidden min-[400px]:block">Serverless Portfolio Analytics & Risk Estimator</p>
         </div>
       </div>
 

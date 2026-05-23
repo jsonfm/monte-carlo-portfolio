@@ -332,7 +332,7 @@ Generated on ${new Date().toLocaleDateString()}
   };
 
   return (
-    <div className="bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800/80 rounded-3xl p-5 md:p-6 shadow-sm dark:shadow-xl space-y-6 transition-colors">
+    <div className="bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800/80 rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 md:p-6 shadow-sm dark:shadow-xl space-y-6 transition-colors">
       
       {/* Report Header */}
       <div className="flex flex-wrap justify-between items-start gap-4 pb-4 border-b border-slate-200 dark:border-slate-800/60">
@@ -655,7 +655,7 @@ Generated on ${new Date().toLocaleDateString()}
           <InfoTooltip content="Advanced institutional risk assessments evaluating extreme negative market conditions and extreme outlier walks." />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
           
           {/* Minimum Simulated Value */}
           <div className="bg-slate-50 dark:bg-slate-900/30 p-3.5 border border-slate-200 dark:border-slate-800/40 rounded-xl space-y-1">
@@ -710,7 +710,7 @@ Generated on ${new Date().toLocaleDateString()}
 
 function SimulationReportSkeleton() {
   return (
-    <div className="bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800/80 rounded-3xl p-5 md:p-6 shadow-sm dark:shadow-xl space-y-6 animate-pulse select-none transition-colors">
+    <div className="bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800/80 rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 md:p-6 shadow-sm dark:shadow-xl space-y-6 animate-pulse select-none transition-colors">
       {/* Report Header Skeleton */}
       <div className="flex flex-wrap justify-between items-start gap-4 pb-4 border-b border-slate-200 dark:border-slate-800/60">
         <div className="flex items-center gap-3">
@@ -863,7 +863,7 @@ function SimulationReportSkeleton() {
           <div className="h-3 w-64 bg-slate-200 dark:bg-slate-800 rounded-md" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
           {[1, 2, 3, 4].map((idx) => (
             <div key={idx} className="bg-slate-50 dark:bg-slate-900/30 p-3.5 border border-slate-200 dark:border-slate-800/40 rounded-xl space-y-2">
               <div className="h-2 w-16 bg-slate-200 dark:bg-slate-800 rounded-md" />

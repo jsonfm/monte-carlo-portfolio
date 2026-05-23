@@ -15,7 +15,7 @@ function InlineMath({ math }: { math: string }) {
 
 export function MethodologyDocs() {
   return (
-    <div className="bg-white dark:bg-slate-900/10 border border-slate-200 dark:border-slate-800/40 rounded-2xl p-5 space-y-4 shadow-sm transition-colors">
+    <div className="bg-white dark:bg-slate-900/10 border border-slate-200 dark:border-slate-800/40 rounded-xl sm:rounded-2xl p-3.5 sm:p-5 space-y-4 shadow-sm transition-colors">
       <div className="flex items-center gap-2">
         <BookOpen className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
         <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Mathematical Methodology & Estimation Models</h3>

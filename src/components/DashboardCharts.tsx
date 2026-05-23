@@ -45,7 +45,7 @@ export function DashboardCharts({
       className={`flex flex-col space-y-6 transition-colors duration-250 ${
         isFullscreen 
           ? 'bg-slate-50 dark:bg-[#0b0f19] p-6 overflow-y-auto w-full h-full' 
-          : 'bg-white dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800/80 p-5 rounded-3xl shadow-sm dark:shadow-xl'
+          : 'bg-white dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800/80 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm dark:shadow-xl'
       }`}
     >
       {/* Container Header with Title and Controls */}

@@ -250,11 +250,11 @@ export function AssetInput({
                   key={asset.ticker}
                   type="button"
                   onClick={() => handleAddAsset({ ...asset, weight: 10 })}
-                  className="w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-between transition-colors border-b border-slate-100 dark:border-slate-800/50 last:border-0"
+                  className="w-full text-left px-4 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-between transition-colors border-b border-slate-100 dark:border-slate-800/50 last:border-0 gap-3"
                 >
-                  <div className="flex flex-col">
+                  <div className="flex flex-col min-w-0 flex-1">
                     <span className="font-bold text-sm text-slate-800 dark:text-slate-200">{asset.ticker}</span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[200px]">{asset.name}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400 truncate">{asset.name}</span>
                   </div>
                   <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded uppercase">
                     {asset.type}
@@ -390,7 +390,7 @@ export function AssetInput({
                             {isCsv ? 'CSV' : asset.type}
                           </span>
                         </div>
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[150px]" title={asset.name}>
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate" title={asset.name}>
                           {asset.name}
                         </span>
                       </div>

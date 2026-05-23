@@ -98,19 +98,19 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 pb-12 select-none transition-colors">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 pb-12 transition-colors">
       <Navbar />
 
-      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 md:px-6 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Side: Setup Column (4/12 cols) */}
         <section className="lg:col-span-4 space-y-6">
-          <div className="bg-white dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800/80 p-5 rounded-3xl space-y-6 shadow-sm dark:shadow-xl transition-colors">
-            <div className="flex justify-between items-start">
+          <div className="bg-white dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800/80 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl space-y-5 sm:space-y-6 shadow-sm dark:shadow-xl transition-colors">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 sm:gap-4">
               <div>
                 <h2 className="text-lg font-black text-slate-800 dark:text-slate-100 tracking-tight leading-none">Portfolio Designer</h2>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">Configure your asset weights and risk factors.</p>
               </div>
-              <div className="flex items-center gap-2 mt-1">
+              <div className="flex items-center gap-2 mt-1 shrink-0 self-end sm:self-auto">
                 <label className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider cursor-pointer flex items-center gap-1.5 select-none">
                   <span>Remember Selection</span>
                   <div className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors duration-200 ease-in-out ${rememberSelection ? 'bg-blue-500' : 'bg-slate-300 dark:bg-slate-700'}`}>
@@ -134,7 +134,7 @@ export default function App() {
             />
           </div>
 
-          <div className="bg-white dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800/80 p-5 rounded-3xl space-y-6 shadow-sm dark:shadow-xl transition-colors">
+          <div className="bg-white dark:bg-slate-900/60 border border-slate-300 dark:border-slate-800/80 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl space-y-5 sm:space-y-6 shadow-sm dark:shadow-xl transition-colors">
             <SimulationControls 
               initialInvestment={initialInvestment}
               setInitialInvestment={setInitialInvestment}
@@ -234,7 +234,7 @@ export default function App() {
 
               <div className={`space-y-6 transition-all duration-200 ${historicalLoading ? 'pointer-events-none select-none filter blur-[0.5px] opacity-75' : ''}`}>
                 {/* Allocation Pie Chart Display */}
-                <div className="bg-white dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800/80 p-5 rounded-3xl shadow-sm dark:shadow-xl space-y-4 transition-colors">
+                <div className="bg-white dark:bg-slate-950/60 border border-slate-300 dark:border-slate-800/80 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm dark:shadow-xl space-y-4 transition-colors">
                   <div>
                     <h2 className="text-sm font-black text-slate-800 dark:text-slate-200 tracking-tight leading-none uppercase">Target Allocation</h2>
                     <p className="text-[10px] text-slate-500 mt-0.5">Vibrant visualization of your portfolio balance.</p>
@@ -243,7 +243,7 @@ export default function App() {
                 </div>
 
                 {/* Header metrics bar */}
-                <div className="bg-white dark:bg-slate-950/40 border border-slate-300 dark:border-slate-800/80 p-5 rounded-3xl shadow-sm dark:shadow-xl transition-colors">
+                <div className="bg-white dark:bg-slate-950/40 border border-slate-300 dark:border-slate-800/80 p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm dark:shadow-xl transition-colors">
                   <MetricsDisplay 
                     historicalData={historicalMetrics} 
                     simulationData={simResult} 

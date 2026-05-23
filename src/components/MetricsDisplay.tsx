@@ -67,21 +67,21 @@ export function MetricsDisplay({
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* CAGR Card */}
-        <div className="bg-white dark:bg-slate-900/50 p-4 border border-slate-200 dark:border-slate-800/60 rounded-2xl relative overflow-hidden group hover:border-blue-500/30 transition-colors shadow-sm">
+        <div className="bg-white dark:bg-slate-900/50 p-3 sm:p-4 border border-slate-200 dark:border-slate-800/60 rounded-xl sm:rounded-2xl relative overflow-hidden group hover:border-blue-500/30 transition-colors shadow-sm">
           <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full filter blur-xl translate-x-4 -translate-y-4" />
           <div className="flex justify-between items-start">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Annual Return (CAGR)</span>
-            <TrendingUp className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+            <span className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Annual Return (CAGR)</span>
+            <TrendingUp className="w-4 h-4 text-blue-500 dark:text-blue-400 shrink-0" />
           </div>
           <div className="mt-2 space-y-1">
-            <p className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
+            <p className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
               {formatPercent(hPort.cagr)}
             </p>
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[9px] sm:text-[10px] text-slate-500 truncate">
               Benchmark: <span className="font-semibold text-slate-600 dark:text-slate-400">{formatPercent(hBench.cagr)}</span>
             </p>
             {sMetrics && (
-              <p className="text-[11px] text-blue-600 dark:text-blue-400 font-medium pt-1 border-t border-slate-200 dark:border-slate-800/40 mt-1">
+              <p className="text-[10px] sm:text-[11px] text-blue-600 dark:text-blue-400 font-medium pt-1 border-t border-slate-200 dark:border-slate-800/40 mt-1 truncate">
                 Projected Median: <span className="font-bold">{formatPercent(sMetrics.expectedCagr)}</span>
               </p>
             )}
@@ -89,21 +89,21 @@ export function MetricsDisplay({
         </div>
 
         {/* Volatility Card */}
-        <div className="bg-white dark:bg-slate-900/50 p-4 border border-slate-200 dark:border-slate-800/60 rounded-2xl relative overflow-hidden group hover:border-emerald-500/30 transition-colors shadow-sm">
+        <div className="bg-white dark:bg-slate-900/50 p-3 sm:p-4 border border-slate-200 dark:border-slate-800/60 rounded-xl sm:rounded-2xl relative overflow-hidden group hover:border-emerald-500/30 transition-colors shadow-sm">
           <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full filter blur-xl translate-x-4 -translate-y-4" />
           <div className="flex justify-between items-start">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Annualized Risk</span>
-            <ShieldAlert className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+            <span className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Annualized Risk</span>
+            <ShieldAlert className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
           </div>
           <div className="mt-2 space-y-1">
-            <p className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
+            <p className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
               {formatPercent(hPort.volatility)}
             </p>
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[9px] sm:text-[10px] text-slate-500 truncate">
               Benchmark: <span className="font-semibold text-slate-600 dark:text-slate-400">{formatPercent(hBench.volatility)}</span>
             </p>
             {sMetrics && (
-              <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium pt-1 border-t border-slate-200 dark:border-slate-800/40 mt-1">
+              <p className="text-[10px] sm:text-[11px] text-emerald-600 dark:text-emerald-400 font-medium pt-1 border-t border-slate-200 dark:border-slate-800/40 mt-1 truncate">
                 Projected Risk: <span className="font-bold">{formatPercent(sMetrics.volatility)}</span>
               </p>
             )}
@@ -111,21 +111,21 @@ export function MetricsDisplay({
         </div>
 
         {/* Risk-Adjusted Card (Sharpe & Sortino) */}
-        <div className="bg-white dark:bg-slate-900/50 p-4 border border-slate-200 dark:border-slate-800/60 rounded-2xl relative overflow-hidden group hover:border-violet-500/30 transition-colors shadow-sm">
+        <div className="bg-white dark:bg-slate-900/50 p-3 sm:p-4 border border-slate-200 dark:border-slate-800/60 rounded-xl sm:rounded-2xl relative overflow-hidden group hover:border-violet-500/30 transition-colors shadow-sm">
           <div className="absolute top-0 right-0 w-24 h-24 bg-violet-500/5 rounded-full filter blur-xl translate-x-4 -translate-y-4" />
           <div className="flex justify-between items-start">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Sharpe & Sortino</span>
-            <Scale className="w-4 h-4 text-violet-500 dark:text-violet-400" />
+            <span className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Sharpe & Sortino</span>
+            <Scale className="w-4 h-4 text-violet-500 dark:text-violet-400 shrink-0" />
           </div>
           <div className="mt-2 space-y-1">
-            <p className="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
+            <p className="text-xl sm:text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
               {hPort.sharpeRatio.toFixed(2)}
             </p>
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[9px] sm:text-[10px] text-slate-500 truncate">
               Sortino Ratio: <span className="font-semibold text-slate-600 dark:text-slate-400">{hPort.sortinoRatio.toFixed(2)}</span>
             </p>
             {sMetrics && (
-              <p className="text-[11px] text-violet-600 dark:text-violet-400 font-medium pt-1 border-t border-slate-200 dark:border-slate-800/40 mt-1">
+              <p className="text-[10px] sm:text-[11px] text-violet-600 dark:text-violet-400 font-medium pt-1 border-t border-slate-200 dark:border-slate-800/40 mt-1 truncate">
                 Proj. Sharpe: <span className="font-bold">{sMetrics.sharpeRatio.toFixed(2)}</span>
               </p>
             )}
@@ -133,21 +133,21 @@ export function MetricsDisplay({
         </div>
 
         {/* Max Drawdown Card */}
-        <div className="bg-white dark:bg-slate-900/50 p-4 border border-slate-200 dark:border-slate-800/60 rounded-2xl relative overflow-hidden group hover:border-amber-500/30 transition-colors shadow-sm">
+        <div className="bg-white dark:bg-slate-900/50 p-3 sm:p-4 border border-slate-200 dark:border-slate-800/60 rounded-xl sm:rounded-2xl relative overflow-hidden group hover:border-amber-500/30 transition-colors shadow-sm">
           <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full filter blur-xl translate-x-4 -translate-y-4" />
           <div className="flex justify-between items-start">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Max Historical Drawdown</span>
-            <Percent className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+            <span className="text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mb-1">Max Historical Drawdown</span>
+            <Percent className="w-4 h-4 text-amber-500 dark:text-amber-400 shrink-0" />
           </div>
           <div className="mt-2 space-y-1">
-            <p className="text-2xl font-black text-rose-500 dark:text-rose-400 tracking-tight">
+            <p className="text-xl sm:text-2xl font-black text-rose-500 dark:text-rose-400 tracking-tight">
               -{formatPercent(hPort.maxDrawdown)}
             </p>
-            <p className="text-[10px] text-slate-500">
+            <p className="text-[9px] sm:text-[10px] text-slate-500 truncate">
               Benchmark: <span className="font-semibold text-rose-600 dark:text-rose-500/80">-{formatPercent(hBench.maxDrawdown)}</span>
             </p>
             {sMetrics && (
-              <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium pt-1 border-t border-slate-200 dark:border-slate-800/40 mt-1">
+              <p className="text-[10px] sm:text-[11px] text-amber-600 dark:text-amber-400 font-medium pt-1 border-t border-slate-200 dark:border-slate-800/40 mt-1 truncate">
                 Value at Risk (95%): <span className="font-bold">{formatCurrency(sMetrics.valueAtRisk95)}</span>
               </p>
             )}
@@ -158,11 +158,11 @@ export function MetricsDisplay({
       <div className={`space-y-6 overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         {/* Regression & Modern CAPM metrics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800/50 rounded-2xl flex items-center gap-3.5 shadow-sm">
-          <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 text-slate-700 dark:text-slate-300">
+        <div className="bg-slate-50 dark:bg-slate-950 p-3 sm:p-4 border border-slate-200 dark:border-slate-800/50 rounded-xl sm:rounded-2xl flex items-center gap-3.5 shadow-sm">
+          <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 text-slate-700 dark:text-slate-300 shrink-0">
             <Zap className="w-4.5 h-4.5 text-yellow-500" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Jensen's Alpha</p>
             <p className="text-base font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">
               {(historicalData.metrics.alpha * 100).toFixed(2)}%
@@ -171,11 +171,11 @@ export function MetricsDisplay({
           </div>
         </div>
 
-        <div className="bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800/50 rounded-2xl flex items-center gap-3.5 shadow-sm">
-          <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 text-slate-700 dark:text-slate-300">
+        <div className="bg-slate-50 dark:bg-slate-950 p-3 sm:p-4 border border-slate-200 dark:border-slate-800/50 rounded-xl sm:rounded-2xl flex items-center gap-3.5 shadow-sm">
+          <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 text-slate-700 dark:text-slate-300 shrink-0">
             <Scale className="w-4.5 h-4.5 text-blue-500 dark:text-blue-400" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Portfolio Beta</p>
             <p className="text-base font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">
               {historicalData.metrics.beta.toFixed(2)}
@@ -184,11 +184,11 @@ export function MetricsDisplay({
           </div>
         </div>
 
-        <div className="bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800/50 rounded-2xl flex items-center gap-3.5 shadow-sm">
-          <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 text-slate-700 dark:text-slate-300">
+        <div className="bg-slate-50 dark:bg-slate-950 p-3 sm:p-4 border border-slate-200 dark:border-slate-800/50 rounded-xl sm:rounded-2xl flex items-center gap-3.5 shadow-sm">
+          <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/60 text-slate-700 dark:text-slate-300 shrink-0">
             <TrendingUp className="w-4.5 h-4.5 text-emerald-500 dark:text-emerald-400" />
           </div>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Correlation</p>
             <p className="text-base font-extrabold text-slate-800 dark:text-slate-200 mt-0.5">
               {(historicalData.metrics.correlation * 100).toFixed(1)}%

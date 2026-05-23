@@ -91,7 +91,7 @@ export function SimulationControls({
 }: SimulationControlsProps) {
   const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false);
   return (
-    <div className="space-y-5 bg-slate-50 dark:bg-slate-900/10 p-5 border border-slate-200 dark:border-slate-800/40 rounded-2xl transition-colors">
+    <div className="space-y-5 bg-slate-50 dark:bg-slate-900/10 p-3.5 sm:p-5 border border-slate-200 dark:border-slate-800/40 rounded-xl sm:rounded-2xl transition-colors">
       <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-300">Simulation Settings</h3>
 
       {/* Group 1: Portfolio Settings (Neutral Theme) */}
@@ -127,7 +127,7 @@ export function SimulationControls({
       </div>
 
       {/* Group 2: Historical Backtest Settings (Blue Theme) */}
-      <div className="border-l-2 border-blue-500 dark:border-blue-400 pl-3 py-1 space-y-3 bg-blue-50/10 dark:bg-blue-950/5 p-3 rounded-r-xl">
+      <div className="border-l-2 border-blue-500 dark:border-blue-400 pl-3 py-1 space-y-3 bg-blue-50/10 dark:bg-blue-950/5 p-2.5 sm:p-3 rounded-r-xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
@@ -187,7 +187,7 @@ export function SimulationControls({
       </div>
 
       {/* Group 3: Monte Carlo Projections Settings (Purple Theme) */}
-      <div className="border-l-2 border-purple-500 dark:border-purple-400 pl-3 py-1 space-y-3 bg-purple-50/10 dark:bg-purple-950/5 p-3 rounded-r-xl">
+      <div className="border-l-2 border-purple-500 dark:border-purple-400 pl-3 py-1 space-y-3 bg-purple-50/10 dark:bg-purple-950/5 p-2.5 sm:p-3 rounded-r-xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-purple-500" />
@@ -300,13 +300,13 @@ export function SimulationControls({
               </div>
             } />
           </div>
-          <div className="grid grid-cols-4 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-lg border border-slate-200 dark:border-slate-800">
             {(['none', 'monthly', 'annually', 'threshold'] as const).map((freq) => (
               <button
                 key={freq}
                 type="button"
                 onClick={() => setRebalanceFrequency(freq)}
-                className={`py-1 px-1 rounded-md text-[9px] font-bold uppercase tracking-wide cursor-pointer transition-all ${
+                className={`py-1.5 sm:py-1 px-1 rounded-md text-[9px] font-bold uppercase tracking-wide cursor-pointer transition-all ${
                   rebalanceFrequency === freq
                     ? 'bg-purple-500 dark:bg-purple-600 text-white shadow-sm'
                     : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
@@ -320,7 +320,7 @@ export function SimulationControls({
       </div>
 
       {/* Group 4: Advanced Realism & Frictions (Expandable Amber Theme) */}
-      <div className="border-l-2 border-amber-500 dark:border-amber-400 pl-3 py-1 space-y-3 bg-amber-50/10 dark:bg-amber-950/5 p-3 rounded-r-xl">
+      <div className="border-l-2 border-amber-500 dark:border-amber-400 pl-3 py-1 space-y-3 bg-amber-50/10 dark:bg-amber-950/5 p-2.5 sm:p-3 rounded-r-xl">
         <button
           type="button"
           onClick={() => setIsAdvancedExpanded(!isAdvancedExpanded)}
@@ -597,11 +597,11 @@ export function SimulationControls({
       </div>
 
       {/* Big Action Buttons */}
-      <div className="flex gap-2.5 pt-2">
+      <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
         <button
           type="button"
           onClick={onReset}
-          className="flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 bg-slate-100 dark:bg-slate-900/40 hover:bg-slate-200 dark:hover:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-semibold py-2.5 px-4 rounded-xl cursor-pointer transition-all shrink-0"
+          className="w-full sm:w-auto flex items-center justify-center gap-1.5 border border-slate-300 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-700 bg-slate-100 dark:bg-slate-900/40 hover:bg-slate-200 dark:hover:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 text-xs font-semibold py-2.5 px-4 rounded-xl cursor-pointer transition-all shrink-0 order-2 sm:order-1"
           title="Reset back to default preset"
         >
           <RotateCcw className="w-4 h-4" /> Reset
@@ -611,7 +611,7 @@ export function SimulationControls({
           type="button"
           onClick={onRunSimulation}
           disabled={!isValid || loading}
-          className={`flex-1 flex items-center justify-center gap-1.5 text-xs font-bold py-2.5 px-4 rounded-xl cursor-pointer shadow-lg transition-all ${
+          className={`w-full sm:flex-1 flex items-center justify-center gap-1.5 text-xs font-bold py-2.5 px-4 rounded-xl cursor-pointer shadow-lg transition-all order-1 sm:order-2 ${
             loading
               ? 'bg-blue-600/50 text-slate-300 cursor-wait'
               : !isValid

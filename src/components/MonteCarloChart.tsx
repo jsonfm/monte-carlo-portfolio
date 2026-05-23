@@ -118,7 +118,7 @@ export default function MonteCarloChart({ simulationData, loading }: MonteCarloC
           </div>
         </div>
 
-        <div className="w-full h-80">
+        <div className="w-full h-64 sm:h-80">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" opacity={0.5} />

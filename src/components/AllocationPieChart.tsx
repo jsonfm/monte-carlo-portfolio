@@ -52,6 +52,17 @@ const renderCustomizedLabel = (props: unknown) => {
 };
 
 export function AllocationPieChart({ assets }: AllocationPieChartProps) {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const chartData = React.useMemo(() => {
     return assets
       .filter(a => a.weight > 0)
@@ -84,7 +95,7 @@ export function AllocationPieChart({ assets }: AllocationPieChartProps) {
               dataKey="value"
               animationBegin={0}
               animationDuration={600}
-              label={renderCustomizedLabel}
+              label={isMobile ? undefined : renderCustomizedLabel}
               labelLine={false}
             >
               {chartData.map((entry, index: number) => (
@@ -116,7 +127,7 @@ export function AllocationPieChart({ assets }: AllocationPieChartProps) {
           return (
             <div 
               key={asset.ticker} 
-              className="flex items-center gap-3 p-2.5 rounded-xl border border-transparent opacity-85 hover:opacity-100 transition-all"
+              className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 border border-slate-100 dark:border-slate-800/40 opacity-90 hover:opacity-100 hover:border-slate-200 dark:hover:border-slate-700/60 shadow-sm transition-all"
             >
               <span 
                 className="w-3 h-3 rounded-full shrink-0 shadow-sm" 
